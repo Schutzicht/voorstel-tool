@@ -623,9 +623,10 @@ export default function ProposalTool() {
     <div className="min-h-screen flex flex-col bg-cream">
       {/* Top bar */}
       <header className="h-14 border-b border-warm-grey bg-white flex items-center px-6 gap-4 shrink-0 z-30 sticky top-0">
-        <button onClick={() => navigate('/agensea-admin')} className="mr-1 p-1.5 hover:bg-warm-grey rounded-full transition-colors text-text-secondary hover:text-dark">
-          <ChevronLeft className="w-5 h-5" />
+        <button onClick={() => navigate('/agensea-admin')} className="mr-3 flex items-center gap-1.5 px-3 py-1.5 hover:bg-warm-grey rounded-full transition-colors text-text-secondary hover:text-dark font-medium text-sm">
+          <ChevronLeft className="w-4 h-4" /> Dashboard
         </button>
+        <div className="w-[1px] h-5 bg-warm-grey shrink-0 mr-3"></div>
         <div className="font-display font-bold text-lg tracking-tight text-dark flex items-center gap-2 shrink-0">
           <div className="w-7 h-7 bg-indigo text-white rounded-md flex items-center justify-center text-xs font-bold">Ag</div>
           Proposal Tool
