@@ -242,7 +242,7 @@ export function DoelSlide({ data }: { data: ProposalData }) {
 }
 
 // ── Slide 6: Over Agensea (Static Team) ──────────────────────────────────────
-export function AboutTeamSlide({ data }: { data: ProposalData }) {
+export function AboutTeamSlide({ data: _data }: { data: ProposalData }) {
   const team = [
     { name: 'Ruben', role: 'Founder & Strategy', img: '/team/ruben.webp' },
     { name: 'Jorian', role: 'Head of Tech', img: '/team/jorian.webp' },
