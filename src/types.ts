@@ -78,76 +78,96 @@ export const SERVICES_OPTIONS = [
   'UX & Webdesign',
   'SEO Optimalisatie',
   'Google Ads (SEA)',
-  'Meta Ads (Facebook/Instagram)',
-  'LinkedIn Advertising',
-  'Content Creatie',
-  'Social Media Beheer',
-  'Maatwerk Software / Applicatie',
-  'AI & Automatisering',
-  'Analytics & Tracking Setup',
-  'Branding & Huisstijl',
-  'Copywriting',
+  'Meta Ads (Social)',
+  'LinkedIn Ads',
+  'Conversie Optimalisatie',
+  'Maatwerk Software / AI Tooling',
+  'E-mail Marketing',
+  'Content Creatie'
 ];
 
-export const ANALYTICS_OPTIONS = [
-  'Google Analytics 4',
-  'Google Search Console',
-  'Google Tag Manager',
-  'Meta Pixel',
-  'LinkedIn Insight Tag',
-  'Looker Studio Dashboard',
-  'Conversie Tracking',
-  'Heatmaps (Hotjar)',
+export const ANALYTICS_OPTIONS = ['Google Analytics 4', 'Google Tag Manager', 'Hotjar', 'Microsoft Clarity', 'Meta Pixel', 'Custom Dashboard'];
+
+export const COMMON_CHALLENGES = [
+  'Lage online zichtbaarheid bij de doelgroep',
+  'Huidige website is verouderd en traag',
+  'Te weinig kwalitatieve leads uit de website',
+  'Conversiepercentage blijft achter bij verwachting',
+  'Handmatige processen kosten te veel tijd',
+  'Geen inzicht in resultaten van advertenties'
 ];
+
+export const COMMON_OPPORTUNITIES = [
+  'Inzetten op intentie-gedreven Google Search',
+  'Schaalbare leadgeneratie via Meta & LinkedIn',
+  'AI-gedreven tools voor procesautomatisering',
+  'Nieuwe branding die vertrouwen en autoriteit uitstraalt',
+  'Pijlsnelle tech-stack voor betere SEO posities',
+  'Datagedreven sturing op basis van harde KPI\'s'
+];
+
+export const COMMON_GOALS = [
+  'Directe stijging in kwalitatieve offerte-aanvragen',
+  'Dominante positie in Google op relevante zoektermen',
+  'Structurele groei in maandelijkse omzet via ads',
+  'Professionalisering van de digitale identiteit',
+  'Automatisering van klantcommunicatie/boarding',
+  'Volledig meetbare marketing funnel'
+];
+
+export const DEFAULT_APPROACHES: Record<string, ApproachStep[]> = {
+  'Marketing': [
+    { id: '1', phase: 'Kennismaking', description: 'Business duik, doelgroep ontleden en transparant voorstel op maat.' },
+    { id: '2', phase: 'Strategie', description: 'KPI\'s bepalen, budgetverdeling over kanalen en meetpunten klaarzetten.' },
+    { id: '3', phase: 'Lancering', description: 'Pixels plaatsen, ads vormgeven en campagnes live zetten.' },
+    { id: '4', phase: 'Optimalisatie', description: 'Dagelijks monitoren, testen en bijsturen voor maximaal resultaat.' }
+  ],
+  'Website': [
+    { id: '1', phase: 'Strategie', description: 'Wireframes, sitemap en bepalen van de gewenste conversiedoelen.' },
+    { id: '2', phase: 'Design', description: 'Vormgeving die past bij de identiteit en focus op gebruikerservaring.' },
+    { id: '3', phase: 'Development', description: 'Bouwen van een pijlsnel platform op moderne technieken.' },
+    { id: '4', phase: 'Lancering', description: 'SEO check, testen en livegang inclusief support na de start.' }
+  ],
+  'Software': [
+    { id: '1', phase: 'Analyse', description: 'Diepgaande verkenning van processen en technische behoeften.' },
+    { id: '2', phase: 'Architectuur', description: 'Datamodel en UX design van het platform of de tool.' },
+    { id: '3', phase: 'Ontwikkeling', description: 'Agile development van de oplossing in sprints.' },
+    { id: '4', phase: 'Implementatie', description: 'Testen, feedback verwerken en uitrol in de organisatie.' }
+  ]
+};
 
 export function getInitialData(): ProposalData {
   return {
     clientName: '',
     clientLogo: '',
-    proposalType: 'Strategie & Implementatie Voorstel',
-    proposalDate: new Date().toLocaleDateString('nl-NL'),
-
+    proposalType: 'Website',
+    proposalDate: new Date().toLocaleDateString('nl-NL', { day: 'numeric', month: 'long', year: 'numeric' }),
     currentSituation: '',
     opportunities: '',
-
     goals: [
       { id: '1', text: '' },
       { id: '2', text: '' },
-      { id: '3', text: '' },
+      { id: '3', text: '' }
     ],
-
-    approach: [
-      { id: '1', phase: 'Audit & Strategie', description: 'We analyseren de huidige situatie en stellen een concrete strategie op.' },
-      { id: '2', phase: 'Design & Ontwikkeling', description: 'We ontwerpen en bouwen de oplossing pixel-perfect.' },
-      { id: '3', phase: 'Lancering & Optimalisatie', description: 'We lanceren live en optimaliseren op basis van data.' },
-      { id: '4', phase: 'Groei & Opschalen', description: 'We groeien mee en schalen de oplossing waar nodig op.' },
-    ],
-
-    metaAdsContent: 'Focus op storytelling & video\nRetargeting van shop bezoekers\nLookalike doelgroepen op basis van kopers',
-    googleAdsContent: 'Focus op actieve zoekintentie\nShopping advertenties voor golfgear\nSearch campagnes op merknaam & categorieen',
-
-    services: ['Maatwerk Website', 'SEO Optimalisatie'],
-
+    approach: DEFAULT_APPROACHES['Website'],
+    services: [],
     includeAnalytics: true,
-    analyticsTools: ['Google Analytics 4', 'Google Tag Manager', 'Meta Pixel'],
-
-    contentByClient: 'Foto- en videomateriaal\nProductfoto\'s en testimonials',
-    contentByAgensea: 'Advertentieteksten & CTA\'s\nCopywriting voor de pagina\'s',
-
+    analyticsTools: ['Google Analytics 4', 'Google Tag Manager'],
+    metaAdsContent: 'Visual storytelling gericht op jouw doelgroep.\nRetargeting van warme websitebezoekers.\nVergroten van merkbekendheid en engagement.',
+    googleAdsContent: 'Inspelen op actieve zoekintentie (SEA).\nPerformance Max voor maximaal bereik.\nContinue optimalisatie op kosten per lead.',
+    contentByClient: 'Huisstijl elementen en logo\'s\nBestaande teksten en beeldmateriaal\nToegang tot benodigde accounts (indien aanwezig)',
+    contentByAgensea: 'Strategisch marketingplan / Design\nInrichting van campagnes of platform\nMaandelijkse rapportage en sturing',
     oneTimeItems: [
-      { id: '1', description: 'Website / Webshop ontwikkeling', agenseaPrice: '€0', typicalPrice: '€2.500 - €5.000' },
-      { id: '2', description: 'Design & UX', agenseaPrice: 'Inbegrepen', typicalPrice: '€750 - €1.500' },
-      { id: '3', description: 'Totaal', agenseaPrice: '€1.150', typicalPrice: '€3.500+' },
+      { id: '1', description: 'Strategie & Setup', typicalPrice: '€ 1.250,-', agenseaPrice: '€ 950,-' },
+      { id: '2', description: 'Design & Ontwikkeling', typicalPrice: '€ 4.500,-', agenseaPrice: '€ 3.250,-' },
+      { id: 'total', description: 'Totaal Eenmalig', typicalPrice: '€ 5.750,-', agenseaPrice: '€ 4.200,-' }
     ],
-
     monthlyItems: [
-      { id: '1', description: 'SEA (Google Ads) beheer', agenseaPrice: 'Inbegrepen', typicalPrice: '€300/mnd' },
-      { id: '2', description: 'SEO rapportage', agenseaPrice: 'Inbegrepen', typicalPrice: '€150/mnd' },
-      { id: '3', description: 'Totaal managementfee', agenseaPrice: '€1.000/mnd', typicalPrice: '€1.500+/mnd' },
+      { id: '1', description: 'Beheer & Optimalisatie', typicalPrice: '€ 850,-', agenseaPrice: '€ 650,-' },
+      { id: '2', description: 'Hosting & Support', typicalPrice: '€ 125,-', agenseaPrice: '€ 85,-' },
+      { id: 'total', description: 'Totaal Maandelijks', typicalPrice: '€ 975,-', agenseaPrice: '€ 735,-' }
     ],
-
-    customDisclaimer: 'Alle genoemde bedragen zijn exclusief BTW.\nAdvertentiebudget is niet inbegrepen en wordt apart afgesproken.\nOpzegtermijn van 2 maanden van toepassing.\nNa afloop van de overeenkomst is het platform eigendom van de klant.',
-
-    ctaText: 'is aan jou',
+    customDisclaimer: 'Genoemde prijzen zijn excl. 21% BTW.\nAdvertentiebudget wordt direct aan het platform betaald.\nMaandelijks opzegbaar na de eerste 3 maanden.',
+    ctaText: 'is aan jou'
   };
 }

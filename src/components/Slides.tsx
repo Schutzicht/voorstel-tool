@@ -83,9 +83,9 @@ export function AgencySlide({ data }: { data: ProposalData }) {
 
       <div className="grid grid-cols-3 gap-6 flex-1 relative z-10">
         {[
-          { num: '01', label: 'Maatwerk Websites', desc: 'Snel, veilig en precies zoals jij het wilt.' },
-          { num: '02', label: 'Online Marketing', desc: 'Direct zichtbaar voor mensen die zoeken.' },
-          { num: '03', label: 'Maatwerk Software', desc: 'Pakketten die zich aanpassen aan jouw workflow.' },
+          { num: '01', label: 'Maatwerk Websites', desc: 'Websites die vertrouwen wekken, klanten overtuigen en klaar zijn voor groei.' },
+          { num: '02', label: 'Online Marketing', desc: 'Strategische campagnes op de juiste kanalen, voor de juiste doelgroep. Datagedreven en altijd transparant.' },
+          { num: '03', label: 'Maatwerk Software', desc: 'Wij ontwerpen praktische applicaties en AI-gedreven tools die je wekelijks uren aan tijd besparen.' },
         ].map((item, idx) => (
           <div 
             key={item.label} 
@@ -244,9 +244,9 @@ export function DoelSlide({ data }: { data: ProposalData }) {
 // ── Slide 6: Over Agensea (Static Team) ──────────────────────────────────────
 export function AboutTeamSlide({ data: _data }: { data: ProposalData }) {
   const team = [
-    { name: 'Ruben', role: 'Founder & Strategy', img: '/team/ruben.webp' },
-    { name: 'Jorian', role: 'Head of Tech', img: '/team/jorian.webp' },
-    { name: 'Jorik', role: 'Head of Marketing', img: '/team/jorik.webp' },
+    { name: 'Ruben', role: 'Account Manager', img: '/team/ruben.webp' },
+    { name: 'Jorian', role: 'Technical Specialist', img: '/team/jorian.webp' },
+    { name: 'Jorik', role: 'Online Marketing Specialist', img: '/team/jorik.webp' },
   ];
 
   return (

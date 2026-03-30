@@ -7,7 +7,8 @@ import {
 import clsx from 'clsx';
 import {
   type ProposalData, type ApproachStep, type InvestmentItem,
-  PROPOSAL_TYPES, SERVICES_OPTIONS, ANALYTICS_OPTIONS, getInitialData
+  PROPOSAL_TYPES, SERVICES_OPTIONS, ANALYTICS_OPTIONS, getInitialData,
+  COMMON_CHALLENGES, COMMON_OPPORTUNITIES, COMMON_GOALS, DEFAULT_APPROACHES
 } from '../types';
 import {
   CoverSlide, AgencySlide, ClientMarqueeSlide, SituatieSlide, DoelSlide, AboutTeamSlide, WerkwijzeSlide,
@@ -144,6 +145,14 @@ export default function ProposalTool() {
   const [showFullPreview, setShowFullPreview] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // Sync approach when proposal type changes
+  const lastType = useRef(data.proposalType);
+  if (lastType.current !== data.proposalType) {
+    const newApproach = DEFAULT_APPROACHES[data.proposalType] || DEFAULT_APPROACHES['Website'];
+    setData(prev => ({ ...prev, approach: newApproach }));
+    lastType.current = data.proposalType;
+  }
+
   // Auto-save to localStorage
   useCallback(() => {
     localStorage.setItem('agensea_proposal_draft', JSON.stringify(data));
@@ -278,20 +287,44 @@ export default function ProposalTool() {
           <div className="space-y-5">
             <div>
               <Label>Huidige situatie (één punt per regel)</Label>
+              <div className="flex flex-wrap gap-1.5 mb-3">
+                {COMMON_CHALLENGES.map(c => (
+                  <button
+                    key={c}
+                    onClick={() => {
+                      const lines = data.currentSituation.split('\n').filter(l => l.trim());
+                      if (!lines.includes(c)) upd('currentSituation', [...lines, c].join('\n'));
+                    }}
+                    className="text-[10px] px-2 py-1 bg-warm-grey/50 hover:bg-indigo/10 hover:text-indigo rounded-md transition-colors"
+                  >+ {c}</button>
+                ))}
+              </div>
               <Textarea
                 value={data.currentSituation}
                 onChange={v => upd('currentSituation', v)}
-                rows={5}
-                placeholder={'Geen eigen platform aanwezig\nBeperkte online zichtbaarheid\nHandmatige processen'}
+                rows={4}
+                placeholder={'Selecteer hierboven of typ zelf...'}
               />
             </div>
             <div>
               <Label>Kansen (één punt per regel)</Label>
+              <div className="flex flex-wrap gap-1.5 mb-3">
+                {COMMON_OPPORTUNITIES.map(o => (
+                  <button
+                    key={o}
+                    onClick={() => {
+                      const lines = data.opportunities.split('\n').filter(l => l.trim());
+                      if (!lines.includes(o)) upd('opportunities', [...lines, o].join('\n'));
+                    }}
+                    className="text-[10px] px-2 py-1 bg-warm-grey/50 hover:bg-indigo/10 hover:text-indigo rounded-md transition-colors"
+                  >+ {o}</button>
+                ))}
+              </div>
               <Textarea
                 value={data.opportunities}
                 onChange={v => upd('opportunities', v)}
-                rows={5}
-                placeholder={'Groeiende markt / niche\nLage concurrentie online\nSchaalbare digitale oplossing mogelijk'}
+                rows={4}
+                placeholder={'Selecteer hierboven of typ zelf...'}
               />
             </div>
           </div>
@@ -299,7 +332,26 @@ export default function ProposalTool() {
 
       case 'doelen':
         return (
-          <div className="space-y-3">
+          <div className="space-y-3 font-sans">
+            <div className="mb-4">
+              <Label>Snel toevoegen</Label>
+              <div className="flex flex-wrap gap-1.5">
+                {COMMON_GOALS.map(goal => (
+                  <button
+                    key={goal}
+                    onClick={() => {
+                      const emptyIndex = data.goals.findIndex(g => !g.text.trim());
+                      if (emptyIndex !== -1) {
+                        updateGoal(data.goals[emptyIndex].id, goal);
+                      } else {
+                        upd('goals', [...data.goals, { id: uid(), text: goal }]);
+                      }
+                    }}
+                    className="text-[10px] px-2 py-1 bg-warm-grey/50 hover:bg-indigo/10 hover:text-indigo rounded-md transition-colors"
+                  >+ {goal}</button>
+                ))}
+              </div>
+            </div>
             {data.goals.map((g, i) => (
               <div key={g.id} className="flex gap-2 items-start">
                 <span className="font-display font-bold text-indigo/60 text-xl leading-none mt-3 w-6 shrink-0 text-right">
