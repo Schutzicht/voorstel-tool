@@ -44,6 +44,14 @@ export interface ProposalData {
   ctaText: string;
 }
 
+export interface SavedProposal {
+  id: string;
+  created_at: string;
+  updated_at: string;
+  view_count: number;
+  data: ProposalData;
+}
+
 export interface GoalItem {
   id: string;
   text: string;

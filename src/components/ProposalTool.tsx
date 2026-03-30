@@ -1,8 +1,10 @@
-import { useState, useRef, useCallback, type ReactNode } from 'react';
+import { useState, useRef, useCallback, useEffect, type ReactNode } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { getProposal, saveProposal } from '../lib/supabase';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ChevronRight, ChevronLeft, Plus, Trash2,
-  Upload, Check, Download, Eye
+  Upload, Check, Download, Eye, Loader2
 } from 'lucide-react';
 import clsx from 'clsx';
 import {
@@ -137,13 +139,24 @@ function uid() { return String(++_id); }
 
 // ── Main Component ────────────────────────────────────────────────────────────
 export default function ProposalTool() {
-  const [data, setData] = useState<ProposalData>(() => {
-    const saved = localStorage.getItem('agensea_proposal_draft');
-    return saved ? JSON.parse(saved) : getInitialData();
-  });
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  
+  const [data, setData] = useState<ProposalData>(getInitialData());
   const [activeSection, setActiveSection] = useState<string>('cover');
   const [showFullPreview, setShowFullPreview] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Fetch initial data if an ID exists
+  useEffect(() => {
+    if (id) {
+      getProposal(id).then(res => {
+        if (res) setData(res.data);
+      }).catch(console.error);
+    }
+  }, [id]);
 
   // Sync approach when proposal type changes
   const lastType = useRef(data.proposalType);
@@ -153,10 +166,21 @@ export default function ProposalTool() {
     lastType.current = data.proposalType;
   }
 
-  // Auto-save to localStorage
-  useCallback(() => {
-    localStorage.setItem('agensea_proposal_draft', JSON.stringify(data));
-  }, [data])();
+  // Auto-save debounced
+  useEffect(() => {
+    if (!id) return;
+    const timer = setTimeout(() => {
+      setIsSaving(true);
+      saveProposal(id, data).then(() => {
+        setIsSaving(false);
+        setLastSaved(new Date());
+      }).catch(err => {
+        console.error('Failed to save', err);
+        setIsSaving(false);
+      });
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, [data, id]);
 
   const currentSection = SECTIONS.find(s => s.id === activeSection)!;
   const currentSlideIndex = currentSection.slideIndex;
@@ -599,13 +623,23 @@ export default function ProposalTool() {
     <div className="min-h-screen flex flex-col bg-cream">
       {/* Top bar */}
       <header className="h-14 border-b border-warm-grey bg-white flex items-center px-6 gap-4 shrink-0 z-30 sticky top-0">
+        <button onClick={() => navigate('/agensea-admin')} className="mr-1 p-1.5 hover:bg-warm-grey rounded-full transition-colors text-text-secondary hover:text-dark">
+          <ChevronLeft className="w-5 h-5" />
+        </button>
         <div className="font-display font-bold text-lg tracking-tight text-dark flex items-center gap-2 shrink-0">
           <div className="w-7 h-7 bg-indigo text-white rounded-md flex items-center justify-center text-xs font-bold">Ag</div>
           Proposal Tool
         </div>
         <div className="w-[1px] h-5 bg-warm-grey shrink-0"></div>
         <span className="text-sm text-text-secondary font-medium truncate">{data.clientName || 'Nieuw voorstel'} — {data.proposalType}</span>
-        <div className="ml-auto flex items-center gap-2 shrink-0">
+        <div className="ml-auto flex items-center gap-3 shrink-0">
+          <div className="text-[11px] font-medium text-text-secondary flex items-center gap-1.5 mr-2">
+            {isSaving ? (
+              <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Opslaan...</>
+            ) : lastSaved ? (
+              <><Check className="w-3.5 h-3.5 text-green-500" /> Opgeslagen om {lastSaved.toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' })}</>
+            ) : null}
+          </div>
           <button
             onClick={() => setShowFullPreview(true)}
             className="flex items-center gap-2 bg-white border border-warm-grey px-4 py-2 rounded-full text-sm font-semibold text-dark hover:border-indigo transition-colors"
