@@ -15,7 +15,7 @@ import {
 import {
   CoverSlide, AgencySlide, ClientMarqueeSlide, SituatieSlide, DoelSlide, AboutTeamSlide, WerkwijzeSlide,
   AdPlatformsSlide, DienstenSlide, AnalyticsSlide, ContentSlide, EenmaligeInvesteringSlide,
-  MaandelijksSlide, DisclaimerSlide, CTASlide
+  MaandelijksSlide, DisclaimerSlide, CTASlide, MockupsSlide
 } from './Slides';
 
 // ── Helper UI ────────────────────────────────────────────────────────────────
@@ -105,11 +105,12 @@ const SECTIONS: FormSection[] = [
   { id: 'adplatforms', slideIndex: 7, slideLabel: 'Advertentie Kanalen', title: '8. Meta vs Google' },
   { id: 'diensten', slideIndex: 8, slideLabel: 'Diensten', title: '9. Diensten & Scope' },
   { id: 'analytics', slideIndex: 9, slideLabel: 'Analytics', title: '10. Data & Analytics' },
-  { id: 'content', slideIndex: 10, slideLabel: 'Content', title: '11. Content & Samenwerking' },
-  { id: 'eenmalig', slideIndex: 11, slideLabel: 'Investering (1x)', title: '12. Eenmalige Investering' },
-  { id: 'maandelijks', slideIndex: 12, slideLabel: 'Investering (mnd)', title: '13. Maandelijkse Investering' },
-  { id: 'disclaimer', slideIndex: 13, slideLabel: 'Disclaimer', title: '14. Voorwaarden' },
-  { id: 'cta', slideIndex: 14, slideLabel: 'Afsluiting', title: '15. Afsluiting & CTA' },
+  { id: 'mockups', slideIndex: 10, slideLabel: 'Mockups', title: '11. Visueel Concept' },
+  { id: 'content', slideIndex: 11, slideLabel: 'Content', title: '12. Content & Samenwerking' },
+  { id: 'eenmalig', slideIndex: 12, slideLabel: 'Investering (1x)', title: '13. Eenmalige Investering' },
+  { id: 'maandelijks', slideIndex: 13, slideLabel: 'Investering (mnd)', title: '14. Maandelijkse Investering' },
+  { id: 'disclaimer', slideIndex: 14, slideLabel: 'Disclaimer', title: '15. Voorwaarden' },
+  { id: 'cta', slideIndex: 15, slideLabel: 'Afsluiting', title: '16. Afsluiting & CTA' },
 ];
 
 function renderSlide(data: ProposalData, index: number) {
@@ -124,11 +125,12 @@ function renderSlide(data: ProposalData, index: number) {
     case 7: return <AdPlatformsSlide data={data} />;
     case 8: return <DienstenSlide data={data} />;
     case 9: return <AnalyticsSlide data={data} />;
-    case 10: return <ContentSlide data={data} />;
-    case 11: return <EenmaligeInvesteringSlide data={data} />;
-    case 12: return <MaandelijksSlide data={data} />;
-    case 13: return <DisclaimerSlide data={data} />;
-    case 14: return <CTASlide data={data} />;
+    case 10: return <MockupsSlide data={data} />;
+    case 11: return <ContentSlide data={data} />;
+    case 12: return <EenmaligeInvesteringSlide data={data} />;
+    case 13: return <MaandelijksSlide data={data} />;
+    case 14: return <DisclaimerSlide data={data} />;
+    case 15: return <CTASlide data={data} />;
     default: return null;
   }
 }

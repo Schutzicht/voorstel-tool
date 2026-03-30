@@ -6,7 +6,7 @@ import { getProposal, incrementViewCount, supabase } from '../lib/supabase';
 import {
   CoverSlide, AgencySlide, ClientMarqueeSlide, SituatieSlide, DoelSlide, AboutTeamSlide, WerkwijzeSlide,
   AdPlatformsSlide, DienstenSlide, AnalyticsSlide, ContentSlide, EenmaligeInvesteringSlide,
-  MaandelijksSlide, DisclaimerSlide, CTASlide
+  MaandelijksSlide, DisclaimerSlide, CTASlide, MockupsSlide
 } from './Slides';
 
 function renderSlide(data: ProposalData, index: number) {
@@ -21,11 +21,12 @@ function renderSlide(data: ProposalData, index: number) {
     case 7: return <AdPlatformsSlide data={data} />;
     case 8: return <DienstenSlide data={data} />;
     case 9: return <AnalyticsSlide data={data} />;
-    case 10: return <ContentSlide data={data} />;
-    case 11: return <EenmaligeInvesteringSlide data={data} />;
-    case 12: return <MaandelijksSlide data={data} />;
-    case 13: return <DisclaimerSlide data={data} />;
-    case 14: return <CTASlide data={data} />;
+    case 10: return <MockupsSlide data={data} />;
+    case 11: return <ContentSlide data={data} />;
+    case 12: return <EenmaligeInvesteringSlide data={data} />;
+    case 13: return <MaandelijksSlide data={data} />;
+    case 14: return <DisclaimerSlide data={data} />;
+    case 15: return <CTASlide data={data} />;
     default: return null;
   }
 }
@@ -89,7 +90,7 @@ export default function ProposalViewer() {
     );
   }
 
-  const slidesCount = 15; // Total number of slides
+  const slidesCount = 16; // Total number of slides
 
   return (
     <div className="min-h-screen bg-[#1a1a1a] relative">
