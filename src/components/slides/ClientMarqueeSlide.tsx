@@ -2,9 +2,21 @@ import { type ProposalData } from '../../types';
 
 export function ClientMarqueeSlide({ data }: { data: ProposalData }) {
   const logos = [
-    { src: "/logos-hero/Logo_Adrz_RGB.png", alt: "Adrz" },
-    { src: "/logos-hero/hz-logo (1).jpg", alt: "HZ" },
-    { src: "/logos-hero/Kaap_RGB_Logo_rond_fc.svg", alt: "De Kaap" },
+    { src: "/logos-hero/Logo_Adrz_RGB.png", alt: "ADRZ" },
+    { src: "/logos-hero/HZ.svg", alt: "HZ" },
+    { src: "/logos-hero/Innovatiepunt KAAP.svg", alt: "Innovatiepunt KAAP" },
+    { src: "/logos-hero/Dockwize.svg", alt: "Dockwize" },
+    { src: "/logos-hero/Bouwgroep R&D.svg", alt: "Bouwgroep R&D" },
+    { src: "/logos-hero/Widea.svg", alt: "Widea" },
+    { src: "/logos-hero/Arieke van liere.svg", alt: "Arieke van Liere" },
+    { src: "/logos-hero/Contemplas.svg", alt: "Contemplas" },
+    { src: "/logos-hero/Fractal.svg", alt: "Fractal" },
+    { src: "/logos-hero/MIM.svg", alt: "MIM" },
+    { src: "/logos-hero/Zeeland podcasts.svg", alt: "Zeeland Podcasts" },
+    { src: "/logos-hero/Buurtteams.svg", alt: "Buurtteams" },
+    { src: "/logos-hero/omoda.svg", alt: "Omoda" },
+    { src: "/logos-hero/roompot.svg", alt: "Roompot" },
+    { src: "/logos-hero/zeeland.svg", alt: "Zeeland" },
   ];
 
   return (
@@ -20,7 +32,7 @@ export function ClientMarqueeSlide({ data }: { data: ProposalData }) {
 
       <div className="relative z-10 w-full overflow-hidden py-12">
         <div className="flex gap-20 animate-marquee whitespace-nowrap">
-          {[...Array(4)].map((_, i) => (
+          {[...Array(2)].map((_, i) => (
             <div key={i} className="flex gap-20 items-center">
               {logos.map((logo) => (
                 <div key={logo.alt} className="w-48 h-24 flex items-center justify-center opacity-60 hover:opacity-100 grayscale hover:grayscale-0 transition-all">
