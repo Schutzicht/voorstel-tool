@@ -241,28 +241,28 @@ export const COMMON_GOALS: Record<string, string[]> = {
 
 export const DEFAULT_APPROACHES: Record<string, ApproachStep[]> = {
   'Marketing': [
-    { id: '1', phase: 'Kennismaking & Intake', description: 'Vrijblijvend gesprek over jouw ambities en uitdagingen. We luisteren, stellen de juiste vragen en denken direct mee.' },
-    { id: '2', phase: 'Strategie & Voorstel', description: 'KPI\'s bepalen, budgetverdeling over kanalen en een concreet plan. Transparant over kosten, planning en aanpak.' },
-    { id: '3', phase: 'Lancering & Realisatie', description: 'Pixels plaatsen, ads vormgeven en campagnes live zetten. Korte feedbackloops en regelmatige updates.' },
-    { id: '4', phase: 'Optimalisatie & Nazorg', description: 'Dagelijks monitoren, testen en bijsturen voor maximaal resultaat. Doorlopende ondersteuning en rapportage.' }
+    { id: '1', phase: 'Kennismaking', description: 'We leren jouw bedrijf kennen. Wat zijn je doelen, wie wil je bereiken en wat heb je al geprobeerd?' },
+    { id: '2', phase: 'Plan & Voorstel', description: 'We maken een helder plan: welke kanalen, hoeveel budget en wat je kunt verwachten. Geen verrassingen achteraf.' },
+    { id: '3', phase: 'Live gaan', description: 'We zetten de advertenties klaar, richten alles in en gaan live. Je blijft op de hoogte via korte updates.' },
+    { id: '4', phase: 'Bijsturen & Groeien', description: 'We houden de resultaten dagelijks in de gaten en sturen bij waar nodig. Zo halen we het maximale eruit.' }
   ],
   'Website': [
-    { id: '1', phase: 'Kennismaking & Intake', description: 'Vrijblijvend gesprek over jouw wensen, doelgroep en conversiedoelen. We denken direct mee over de beste aanpak.' },
-    { id: '2', phase: 'Strategie & Design', description: 'Wireframes, sitemap en UX design dat past bij jouw identiteit. Transparant over kosten en planning.' },
-    { id: '3', phase: 'Development & Realisatie', description: 'Bouwen van een pijlsnel platform op moderne technieken. Direct contact met de specialisten, korte feedbackloops.' },
-    { id: '4', phase: 'Oplevering & Nazorg', description: 'Grondige test- en kwaliteitscontrole, SEO check en livegang. Training, overdracht en doorlopende ondersteuning.' }
+    { id: '1', phase: 'Kennismaking', description: 'We bespreken jouw wensen, wie je klanten zijn en wat de website voor je moet opleveren.' },
+    { id: '2', phase: 'Ontwerp', description: 'We ontwerpen de indeling en vormgeving van je website. Je ziet vooraf precies hoe alles eruitziet.' },
+    { id: '3', phase: 'Bouwen', description: 'We bouwen je website: snel, veilig en op moderne technieken. Je kunt tussendoor meekijken en feedback geven.' },
+    { id: '4', phase: 'Oplevering', description: 'We testen alles grondig, zetten de website live en zorgen dat jij ermee kunt werken. Daarna blijven we beschikbaar.' }
   ],
   'Software': [
-    { id: '1', phase: 'Kennismaking & Intake', description: 'Vrijblijvend gesprek over jouw processen en uitdagingen. Diepgaande verkenning van technische behoeften.' },
-    { id: '2', phase: 'Analyse & Architectuur', description: 'Datamodel, UX design en technische architectuur vastleggen. Transparant over kosten en planning.' },
-    { id: '3', phase: 'Ontwikkeling & Realisatie', description: 'Agile development in sprints met korte feedbackloops. Direct contact met de developers die aan je project werken.' },
-    { id: '4', phase: 'Oplevering & Nazorg', description: 'Testen, feedback verwerken en uitrol in de organisatie. Training, overdracht en doorlopende ondersteuning.' }
+    { id: '1', phase: 'Kennismaking', description: 'We brengen samen in kaart hoe je nu werkt en waar het beter kan. Welke taken kosten te veel tijd?' },
+    { id: '2', phase: 'Ontwerp', description: 'We bedenken hoe de oplossing eruitziet en hoe die past in jouw werkwijze. Helder en zonder technisch jargon.' },
+    { id: '3', phase: 'Bouwen', description: 'We ontwikkelen de software stap voor stap. Je kunt tussendoor testen en feedback geven zodat het precies klopt.' },
+    { id: '4', phase: 'Oplevering', description: 'We zorgen dat alles werkt, leggen het uit aan je team en blijven beschikbaar voor vragen en verbeteringen.' }
   ],
   'Volledig': [
-    { id: '1', phase: 'Kennismaking & Intake', description: 'Vrijblijvend gesprek over jouw ambities en uitdagingen. We luisteren, stellen de juiste vragen en bepalen samen de scope.' },
-    { id: '2', phase: 'Strategie & Voorstel', description: 'Concreet plan met wireframes, merkidentiteit, KPI\'s en kanaalstrategie. Transparant over kosten en planning.' },
-    { id: '3', phase: 'Realisatie', description: 'Platform bouwen, campagnes opzetten en gefaseerd live gaan. Korte feedbackloops en regelmatige updates.' },
-    { id: '4', phase: 'Oplevering & Nazorg', description: 'Grondige kwaliteitscontrole, training en overdracht. Doorlopende ondersteuning, rapportage en continue optimalisatie.' }
+    { id: '1', phase: 'Kennismaking', description: 'We leren jouw bedrijf kennen. Wat zijn je ambities, waar loop je tegenaan en wat heb je nodig?' },
+    { id: '2', phase: 'Plan & Ontwerp', description: 'We maken een compleet plan: hoe je website eruitziet, welke kanalen we inzetten en wat het kost. Helder en transparant.' },
+    { id: '3', phase: 'Bouwen & Live gaan', description: 'We bouwen je platform, zetten campagnes op en gaan stap voor stap live. Je blijft betrokken via korte updates.' },
+    { id: '4', phase: 'Oplevering & Groeien', description: 'We leveren alles op, zorgen dat je ermee kunt werken en blijven bijsturen voor het beste resultaat.' }
   ]
 };
 
