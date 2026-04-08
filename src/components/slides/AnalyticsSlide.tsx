@@ -13,17 +13,14 @@ export function AnalyticsSlide({ data }: { data: ProposalData }) {
         </h2>
       </div>
 
-      <div className="flex-1 grid grid-cols-2 gap-5 content-start relative z-10">
+      <div className="flex-1 grid grid-cols-2 gap-4 content-start relative z-10">
         {data.analyticsTools.map((tool, i) => (
           <div
             key={tool}
-            className="flex items-center gap-6 bg-white/60 backdrop-blur-xl px-8 py-6 rounded-[2rem] border border-white shadow-lg reveal"
+            className="bg-white/60 backdrop-blur-xl pl-6 pr-6 py-5 rounded-2xl border border-white shadow-md border-l-[3px] border-l-indigo reveal"
             style={{ animationDelay: `${0.2 + i * 0.1}s` }}
           >
-            <div className="w-12 h-12 rounded-xl bg-indigo/10 flex items-center justify-center shrink-0">
-               <div className="w-5 h-5 rounded-sm bg-indigo transform rotate-45"></div>
-            </div>
-            <span className="font-display font-bold text-dark text-2xl tracking-tight">{tool}</span>
+            <span className="font-display font-bold text-dark text-xl tracking-tight">{tool}</span>
           </div>
         ))}
       </div>
