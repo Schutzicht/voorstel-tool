@@ -15,8 +15,7 @@ export function EenmaligeInvesteringSlide({ data }: { data: ProposalData }) {
           <thead>
             <tr className="bg-indigo text-white">
               <th className="text-left px-10 py-6 font-display font-bold text-sm uppercase tracking-widest">Onderdeel</th>
-              <th className="text-right px-10 py-6 font-display font-bold text-sm uppercase tracking-widest text-white/60">Gebruikelijk</th>
-              <th className="text-right px-10 py-6 font-display font-bold text-sm uppercase tracking-widest text-white">Agensea</th>
+              <th className="text-right px-10 py-6 font-display font-bold text-sm uppercase tracking-widest">Prijs</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-dark/5">
@@ -26,9 +25,6 @@ export function EenmaligeInvesteringSlide({ data }: { data: ProposalData }) {
                 <tr key={item.id} className={`${isTotal ? 'bg-indigo/5' : ''} transition-colors hover:bg-indigo/[0.02]`}>
                   <td className={`px-10 py-5 text-dark text-lg ${isTotal ? 'font-display font-bold text-2xl' : 'font-medium'}`}>
                     {item.description}
-                  </td>
-                  <td className={`px-10 py-5 text-right text-base text-text-secondary line-through opacity-40 ${isTotal ? 'font-bold' : ''}`}>
-                    {item.typicalPrice}
                   </td>
                   <td className={`px-10 py-5 text-right font-display font-bold text-indigo ${isTotal ? 'text-3xl' : 'text-xl'}`}>
                     {item.agenseaPrice}
