@@ -9,15 +9,12 @@ export function DisclaimerSlide({ data }: { data: ProposalData }) {
         <h2 className="text-[3.5rem] font-display font-bold text-dark tracking-tight leading-none">De kleine letters.</h2>
       </div>
 
-      <div className="flex-1 bg-white/60 backdrop-blur-2xl rounded-[2.5rem] p-12 border border-white shadow-xl flex flex-col justify-center relative z-10 reveal" style={{ animationDelay: '0.2s' }}>
-        <ul className="grid grid-cols-2 gap-x-12 gap-y-6">
-          {data.customDisclaimer.split('\n').filter(Boolean).map((line, i) => (
-            <li key={i} className="flex gap-4 items-start">
-              <div className="w-1.5 h-1.5 rounded-full bg-indigo mt-2.5 shrink-0"></div>
-              <span className="text-text-primary text-lg leading-relaxed">{line}</span>
-            </li>
-          ))}
-        </ul>
+      <div className="flex-1 relative z-10 grid grid-cols-2 gap-3 content-start reveal" style={{ animationDelay: '0.2s' }}>
+        {data.customDisclaimer.split('\n').filter(Boolean).map((line, i) => (
+          <div key={i} className="bg-white/60 backdrop-blur-xl pl-5 pr-5 py-4 rounded-2xl border border-white shadow-md border-l-[3px] border-l-indigo">
+            <span className="text-text-primary text-sm leading-relaxed">{line}</span>
+          </div>
+        ))}
       </div>
 
       <p className="absolute bottom-6 right-8 text-[10px] uppercase tracking-widest text-dark/20 font-bold font-display reveal">
