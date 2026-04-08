@@ -17,7 +17,7 @@ export function DienstenSlide({ data }: { data: ProposalData }) {
 
       <div className={`flex-1 relative z-10 grid gap-4 content-start ${useTwoColumns ? 'grid-cols-2' : 'grid-cols-1 max-w-2xl'}`}>
         {services.map((s, i) => {
-          const desc = SERVICE_DESCRIPTIONS[s];
+          const desc = data.serviceDescriptions?.[s] || SERVICE_DESCRIPTIONS[s];
           return (
             <div
               key={s}

@@ -1,7 +1,7 @@
 import type { ProposalData } from '../types';
 import {
   COMMON_CHALLENGES, COMMON_OPPORTUNITIES, COMMON_GOALS,
-  DEFAULT_APPROACHES, SERVICE_CATEGORIES,
+  DEFAULT_APPROACHES, SERVICE_CATEGORIES, SERVICE_DESCRIPTIONS,
 } from '../types';
 
 /**
@@ -95,6 +95,9 @@ export function generateProposalFromOnboarding(input: OnboardingInput): Proposal
     linkedinAdsContent,
 
     services: input.services,
+    serviceDescriptions: Object.fromEntries(
+      input.services.filter(s => SERVICE_DESCRIPTIONS[s]).map(s => [s, SERVICE_DESCRIPTIONS[s]])
+    ),
 
     includeAnalytics: analyticsTools.length > 0,
     analyticsTools,

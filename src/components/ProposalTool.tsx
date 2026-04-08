@@ -177,7 +177,14 @@ export default function ProposalTool() {
       case 'adplatforms':
         return <AdPlatformsForm data={data} upd={upd} />;
       case 'diensten':
-        return <DienstenForm services={data.services} onToggle={toggleService} onAdd={(s: string) => upd('services', [...data.services, s])} onRemove={(s: string) => upd('services', data.services.filter(x => x !== s))} />;
+        return <DienstenForm
+          services={data.services}
+          serviceDescriptions={data.serviceDescriptions || {}}
+          onToggle={toggleService}
+          onAdd={(s: string) => upd('services', [...data.services, s])}
+          onRemove={(s: string) => { upd('services', data.services.filter(x => x !== s)); const descs = { ...data.serviceDescriptions }; delete descs[s]; upd('serviceDescriptions', descs); }}
+          onDescriptionChange={(s: string, desc: string) => upd('serviceDescriptions', { ...data.serviceDescriptions, [s]: desc })}
+        />;
       case 'analytics':
         return <CheckboxGridForm label="Tools & Tracking selecteren" options={ANALYTICS_OPTIONS} selected={data.analyticsTools} onToggle={toggleAnalytics} />;
       case 'content':

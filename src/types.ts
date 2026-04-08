@@ -38,6 +38,7 @@ export interface ProposalData {
 
   // Diensten
   services: string[];
+  serviceDescriptions: Record<string, string>;
 
   // Data & Analytics
   includeAnalytics: boolean;
@@ -308,6 +309,7 @@ export function migrateProposalData(saved: Partial<ProposalData>): ProposalData 
   if (!Array.isArray(migrated.oneTimeItems)) migrated.oneTimeItems = [];
   if (!Array.isArray(migrated.monthlyItems)) migrated.monthlyItems = [];
   if (!Array.isArray(migrated.hiddenSlides)) migrated.hiddenSlides = [];
+  if (!migrated.serviceDescriptions || typeof migrated.serviceDescriptions !== 'object') migrated.serviceDescriptions = {};
 
   return migrated;
 }
@@ -327,6 +329,7 @@ export function getInitialData(): ProposalData {
     approach: [],
     adPlatforms: [],
     services: [],
+    serviceDescriptions: {},
     includeAnalytics: true,
     analyticsTools: [],
     metaAdsContent: '',
