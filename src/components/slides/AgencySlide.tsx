@@ -53,7 +53,7 @@ export function AgencySlide({ data }: { data: ProposalData }) {
           </div>
         </div>
         <p className="text-[10px] uppercase tracking-[0.2em] text-text-secondary font-bold opacity-60 reveal" style={{ animationDelay: '0.7s' }}>
-          {data.clientName || 'Klant'} · focus op resultaat
+          Agensea · full-service digital agency
         </p>
       </div>
     </div>
