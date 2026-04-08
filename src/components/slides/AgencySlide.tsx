@@ -1,7 +1,7 @@
 import { type ProposalData } from '../../types';
 import { MeshBackground } from './MeshBackground';
 
-export function AgencySlide({ data }: { data: ProposalData }) {
+export function AgencySlide({ data: _data }: { data: ProposalData }) {
   return (
     <div className="pdf-slide bg-[#FAF9F6] relative flex flex-col p-16">
       <MeshBackground />
