@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Settings, Eye, FileEdit, Trash2, Copy, Check, CopyPlus } from 'lucide-react';
+import { Plus, Settings, Eye, FileEdit, Trash2, Copy, Check, CopyPlus, PenLine } from 'lucide-react';
 import type { SavedProposal } from '../types';
 import { listProposals, saveProposal, supabase } from '../lib/supabase';
 
@@ -108,6 +108,16 @@ export default function Dashboard() {
                   <div className="flex justify-between text-sm">
                     <span className="text-text-secondary">Datum</span>
                     <span className="font-medium text-dark">{proposal.data.proposalDate}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-text-secondary">Status</span>
+                    {proposal.signature?.agreed ? (
+                      <span className="font-medium flex items-center gap-1.5 bg-green-500/10 text-green-600 px-2 py-0.5 rounded-md text-xs">
+                        <PenLine className="w-3.5 h-3.5" /> Ondertekend
+                      </span>
+                    ) : (
+                      <span className="font-medium text-text-secondary bg-warm-grey/50 px-2 py-0.5 rounded-md text-xs">Wacht op akkoord</span>
+                    )}
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-text-secondary">Views</span>

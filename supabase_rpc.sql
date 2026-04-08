@@ -9,3 +9,6 @@ BEGIN
   WHERE id = proposal_id;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Add signature column for proposal signing
+ALTER TABLE proposals ADD COLUMN IF NOT EXISTS signature JSONB DEFAULT NULL;

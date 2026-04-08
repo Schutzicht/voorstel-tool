@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Download, Copy, Check, Loader2 } from 'lucide-react';
-import type { ProposalData } from '../types';
+import { Download, Copy, Check, Loader2, PenLine, CheckCircle2 } from 'lucide-react';
+import type { ProposalData, ProposalSignature } from '../types';
 import { migrateProposalData } from '../types';
-import { getProposal, incrementViewCount, supabase } from '../lib/supabase';
+import { getProposal, incrementViewCount, signProposal, supabase } from '../lib/supabase';
 import { generateSlides } from './renderSlide';
 import { ScaledSlide } from './ScaledSlide';
 import { SlideErrorBoundary } from './SlideErrorBoundary';
@@ -16,6 +16,11 @@ export default function ProposalViewer() {
   const [error, setError] = useState(false);
   const [copied, setCopied] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
+  const [signature, setSignature] = useState<ProposalSignature | null>(null);
+  const [signName, setSignName] = useState('');
+  const [signAgreed, setSignAgreed] = useState(false);
+  const [isSigning, setIsSigning] = useState(false);
+  const [signSuccess, setSignSuccess] = useState(false);
 
   useEffect(() => {
     async function fetch() {
@@ -24,6 +29,7 @@ export default function ProposalViewer() {
         const saved = await getProposal(id);
         if (saved) {
           setData(migrateProposalData(saved.data));
+          if (saved.signature) { setSignature(saved.signature); setSignSuccess(true); }
           incrementViewCount(id).catch(console.error);
         } else {
           setError(true);
@@ -69,6 +75,25 @@ export default function ProposalViewer() {
   }
 
   const slides = generateSlides(data);
+
+  const handleSign = async () => {
+    if (!id || !signName.trim() || !signAgreed) return;
+    setIsSigning(true);
+    try {
+      const sig: ProposalSignature = {
+        name: signName.trim(),
+        date: new Date().toLocaleDateString('nl-NL', { day: 'numeric', month: 'long', year: 'numeric' }),
+        agreed: true,
+      };
+      await signProposal(id, sig);
+      setSignature(sig);
+      setSignSuccess(true);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsSigning(false);
+    }
+  };
 
   const handleExportPDF = async () => {
     setIsExporting(true);
@@ -118,6 +143,56 @@ export default function ProposalViewer() {
             </ScaledSlide>
           </SlideErrorBoundary>
         ))}
+
+        {/* Ondertekenen */}
+        <div className="w-full max-w-2xl no-print">
+          {signSuccess && signature ? (
+            <div className="bg-green-500/10 border border-green-500/20 backdrop-blur rounded-2xl p-8 text-center">
+              <CheckCircle2 className="w-12 h-12 text-green-500 mx-auto mb-4" />
+              <h3 className="font-display font-bold text-white text-2xl mb-2">Voorstel ondertekend</h3>
+              <p className="text-white/60 text-sm">
+                Ondertekend door <span className="text-white font-medium">{signature.name}</span> op {signature.date}
+              </p>
+            </div>
+          ) : (
+            <div className="bg-white/5 border border-white/10 backdrop-blur rounded-2xl p-8">
+              <div className="flex items-center gap-3 mb-6">
+                <PenLine className="w-6 h-6 text-indigo" />
+                <h3 className="font-display font-bold text-white text-2xl">Akkoord? Teken hier.</h3>
+              </div>
+              <p className="text-white/50 text-sm mb-6">
+                Door te ondertekenen ga je akkoord met het voorstel en de genoemde voorwaarden.
+              </p>
+              <div className="space-y-4">
+                <input
+                  type="text"
+                  value={signName}
+                  onChange={e => setSignName(e.target.value)}
+                  placeholder="Je volledige naam"
+                  className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/10 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-indigo transition-colors"
+                />
+                <label className="flex items-start gap-3 cursor-pointer group">
+                  <button
+                    onClick={() => setSignAgreed(!signAgreed)}
+                    className={`w-5 h-5 rounded border shrink-0 mt-0.5 flex items-center justify-center transition-all ${signAgreed ? 'bg-indigo border-indigo' : 'border-white/20 group-hover:border-white/40'}`}
+                  >
+                    {signAgreed && <Check className="w-3 h-3 text-white" />}
+                  </button>
+                  <span className="text-white/70 text-sm leading-relaxed">
+                    Ik ga akkoord met dit voorstel en de bijbehorende voorwaarden van Agensea.
+                  </span>
+                </label>
+                <button
+                  onClick={handleSign}
+                  disabled={!signName.trim() || !signAgreed || isSigning}
+                  className="w-full py-3.5 rounded-xl bg-indigo text-white font-display font-bold text-base hover:bg-indigo-light transition-all disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  {isSigning ? <><Loader2 className="w-4 h-4 animate-spin" /> Ondertekenen...</> : 'Voorstel ondertekenen'}
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
       <style>{`

@@ -61,12 +61,19 @@ export interface ProposalData {
   ctaText: string;
 }
 
+export interface ProposalSignature {
+  name: string;
+  date: string;
+  agreed: boolean;
+}
+
 export interface SavedProposal {
   id: string;
   created_at: string;
   updated_at: string;
   view_count: number;
   data: ProposalData;
+  signature?: ProposalSignature | null;
 }
 
 export interface GoalItem {
@@ -161,6 +168,21 @@ export const SERVICE_DESCRIPTIONS: Record<string, string> = {
 };
 
 export const ANALYTICS_OPTIONS = ['Google Analytics 4', 'Google Tag Manager', 'Google Search Console', 'Google My Business', 'Hotjar', 'Microsoft Clarity', 'Meta Pixel', 'Custom Dashboard'];
+
+export const DISCLAIMER_OPTIONS = [
+  'Genoemde prijzen zijn exclusief 21% BTW',
+  'Advertentiebudget wordt direct aan het platform betaald en is niet inbegrepen',
+  'Maandelijks opzegbaar na de eerste 3 maanden',
+  'Prijzen zijn geldig tot 30 dagen na dagtekening',
+  'Tussentijdse wijzigingen worden in overleg doorberekend',
+  'Levertijden zijn indicatief en afhankelijk van tijdige aanlevering door de klant',
+  'Intellectueel eigendom gaat over na volledige betaling',
+  'Op deze overeenkomst zijn onze algemene voorwaarden van toepassing',
+  'Facturatie vindt maandelijks achteraf plaats',
+  'Eenmalige kosten worden gefactureerd bij start van het project',
+  'Hosting en domeinnaam zijn niet inbegrepen tenzij anders vermeld',
+  'Support na oplevering is 3 maanden inbegrepen',
+];
 
 export const CLIENT_CONTENT_OPTIONS: Record<string, string[]> = {
   general: [

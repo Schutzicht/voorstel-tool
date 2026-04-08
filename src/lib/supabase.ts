@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import type { ProposalData, SavedProposal } from '../types';
+import type { ProposalData, ProposalSignature, SavedProposal } from '../types';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -69,6 +69,24 @@ export async function listProposals() {
   }
 
   return data as SavedProposal[];
+}
+
+export async function signProposal(id: string, signature: ProposalSignature) {
+  if (!isConfigured()) return null;
+
+  const { data, error } = await supabase
+    .from('proposals')
+    .update({ signature, updated_at: new Date().toISOString() })
+    .eq('id', id)
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error signing proposal:', error);
+    throw error;
+  }
+
+  return data as SavedProposal;
 }
 
 export async function incrementViewCount(id: string) {
