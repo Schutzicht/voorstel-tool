@@ -162,6 +162,62 @@ export const SERVICE_DESCRIPTIONS: Record<string, string> = {
 
 export const ANALYTICS_OPTIONS = ['Google Analytics 4', 'Google Tag Manager', 'Google Search Console', 'Google My Business', 'Hotjar', 'Microsoft Clarity', 'Meta Pixel', 'Custom Dashboard'];
 
+export const CLIENT_CONTENT_OPTIONS: Record<string, string[]> = {
+  general: [
+    'Huisstijl elementen en logo\'s',
+    'Toegang tot benodigde accounts',
+    'Feedback op tussentijdse oplevermomenten',
+  ],
+  website: [
+    'Teksten voor de website',
+    'Foto- en beeldmateriaal',
+    'Productfoto\'s en omschrijvingen',
+  ],
+  marketing: [
+    'Bestaand advertentiemateriaal (indien aanwezig)',
+    'Doelgroep informatie en klantendata',
+    'Bestaande merkrichtlijnen',
+  ],
+  software: [
+    'Beschrijving van huidige werkprocessen',
+    'Toegang tot bestaande systemen',
+    'Testgebruikers voor feedback',
+  ],
+  content: [
+    'Ruwe content en beeldmateriaal als basis',
+    'Merkrichtlijnen en tone of voice',
+  ],
+};
+
+export const AGENSEA_CONTENT_OPTIONS: Record<string, string[]> = {
+  general: [
+    'Projectmanagement en communicatie',
+    'Maandelijkse rapportage en sturing',
+  ],
+  website: [
+    'Ontwerp en vormgeving van de website',
+    'Technische bouw en ontwikkeling',
+    'Mobiele optimalisatie',
+    'Zoekmachine-optimalisatie (SEO)',
+  ],
+  marketing: [
+    'Marketingstrategie en campagneplan',
+    'Advertenties maken en beheren',
+    'Doelgroep onderzoek en targeting',
+    'Resultaten bijhouden en optimaliseren',
+  ],
+  software: [
+    'Technisch ontwerp en ontwikkeling',
+    'Gebruiksvriendelijk design',
+    'Testen en kwaliteitscontrole',
+    'Training en handleiding',
+  ],
+  content: [
+    'Copywriting en tekstcreatie',
+    'Grafisch ontwerp en beeldbewerking',
+  ],
+};
+
 export const COMMON_CHALLENGES: Record<string, string[]> = {
   website: [
     'Nog geen professionele website aanwezig',
