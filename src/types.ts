@@ -1,46 +1,62 @@
+export interface WizardSelections {
+  picks: string[];         // e.g. ['website', 'ads', 'seo']
+  adPlatforms: string[];   // e.g. ['Meta Ads', 'Google Ads']
+  analyticsTools: string[];
+  challenges: string[];
+  opportunities: string[];
+  goals: string[];
+}
+
 export interface ProposalData {
-  // Slide 1 - Cover
+  // Meta
+  onboardingCompleted: boolean;
+  wizardSelections?: WizardSelections;
+  hiddenSlides: string[];  // slide keys to hide (e.g. ['analytics', 'mockups'])
+
+  // Client info
   clientName: string;
-  clientLogo: string; // base64 data URL
+  clientLogo: string;
+  logoScale: number;
   proposalType: string;
   proposalDate: string;
 
-  // Slide 2 - Agency intro (pre-filled, always Agensea)
-  // Slide 3 - Situatie analyse
+  // Situatie analyse
   currentSituation: string;
   opportunities: string;
 
-  // Slide 4 - Concrete doelen
+  // Concrete doelen
   goals: GoalItem[];
 
-  // Slide 5 - Werkwijze / Aanpak
+  // Werkwijze / Aanpak
   approach: ApproachStep[];
 
-  // Slide 6 - Ad Platforms
+  // Ad Platforms (which ones are active)
+  adPlatforms: string[];
   metaAdsContent: string;
   googleAdsContent: string;
+  linkedinAdsContent: string;
 
-  // Slide 7 - Diensten
+  // Diensten
   services: string[];
 
-  // Slide 8 - Data & Analytics
+  // Data & Analytics
   includeAnalytics: boolean;
   analyticsTools: string[];
 
-  // Slide 9 - Content / Contentbeheer
+  // Content / Contentbeheer
   contentByClient: string;
   contentByAgensea: string;
 
-  // Slide 10 - Eenmalige investering
+  // Eenmalige investering
   oneTimeItems: InvestmentItem[];
 
-  // Slide 11 - Maandelijkse investering
+  // Maandelijkse investering
   monthlyItems: InvestmentItem[];
 
-  // Slide 12 - Disclaimer
+  // Disclaimer
   customDisclaimer: string;
 
-  // Slide 13 - CTA / Afsluiting
+  // CTA / Afsluiting
   ctaText: string;
 }
 
@@ -70,6 +86,41 @@ export interface InvestmentItem {
   typicalPrice: string;
 }
 
+// ── Ad platform options ─────────────────────────────────────────────────────
+export const AD_PLATFORMS = ['Meta Ads', 'Google Ads', 'LinkedIn Ads'] as const;
+
+// ── Service categories for onboarding ───────────────────────────────────────
+export const SERVICE_CATEGORIES = [
+  {
+    id: 'website',
+    label: 'Website / Webshop',
+    description: 'Maatwerk website, webshop of landing pages',
+    services: ['Maatwerk Website', 'Webshop ontwikkeling', 'UX & Webdesign'],
+    proposalType: 'Website Voorstel',
+  },
+  {
+    id: 'marketing',
+    label: 'Online Marketing',
+    description: 'Advertenties, SEO en conversie optimalisatie',
+    services: ['SEO Optimalisatie', 'Google Ads (SEA)', 'Meta Ads (Social)', 'LinkedIn Ads', 'Conversie Optimalisatie', 'E-mail Marketing'],
+    proposalType: 'Online Marketing Voorstel',
+  },
+  {
+    id: 'software',
+    label: 'Software / AI Tooling',
+    description: 'Maatwerk applicaties, automatisering of AI tools',
+    services: ['Maatwerk Software / AI Tooling'],
+    proposalType: 'Software & Applicatie Voorstel',
+  },
+  {
+    id: 'content',
+    label: 'Content Creatie',
+    description: 'Foto, video, copywriting en social content',
+    services: ['Content Creatie'],
+    proposalType: 'Strategie & Implementatie Voorstel',
+  },
+] as const;
+
 export const PROPOSAL_TYPES = [
   'Strategie & Implementatie Voorstel',
   'Website Voorstel',
@@ -96,32 +147,89 @@ export const SERVICES_OPTIONS = [
 
 export const ANALYTICS_OPTIONS = ['Google Analytics 4', 'Google Tag Manager', 'Hotjar', 'Microsoft Clarity', 'Meta Pixel', 'Custom Dashboard'];
 
-export const COMMON_CHALLENGES = [
-  'Lage online zichtbaarheid bij de doelgroep',
-  'Huidige website is verouderd en traag',
-  'Te weinig kwalitatieve leads uit de website',
-  'Conversiepercentage blijft achter bij verwachting',
-  'Handmatige processen kosten te veel tijd',
-  'Geen inzicht in resultaten van advertenties'
-];
+export const COMMON_CHALLENGES: Record<string, string[]> = {
+  website: [
+    'Huidige website is verouderd en traag',
+    'Geen mobiel-geoptimaliseerde ervaring',
+    'Conversiepercentage blijft achter bij verwachting',
+    'Website straalt niet het juiste vertrouwen uit',
+  ],
+  marketing: [
+    'Lage online zichtbaarheid bij de doelgroep',
+    'Te weinig kwalitatieve leads uit online kanalen',
+    'Geen inzicht in resultaten van advertenties',
+    'Hoge kosten per acquisitie zonder sturing',
+  ],
+  software: [
+    'Handmatige processen kosten te veel tijd',
+    'Bestaande tools sluiten niet aan op de workflow',
+    'Data is verspreid over meerdere systemen',
+    'Schaalprobleem: groei wordt geremd door technologie',
+  ],
+  general: [
+    'Lage online zichtbaarheid bij de doelgroep',
+    'Huidige website is verouderd en traag',
+    'Te weinig kwalitatieve leads uit de website',
+    'Conversiepercentage blijft achter bij verwachting',
+    'Handmatige processen kosten te veel tijd',
+    'Geen inzicht in resultaten van advertenties',
+  ],
+};
 
-export const COMMON_OPPORTUNITIES = [
-  'Inzetten op intentie-gedreven Google Search',
-  'Schaalbare leadgeneratie via Meta & LinkedIn',
-  'AI-gedreven tools voor procesautomatisering',
-  'Nieuwe branding die vertrouwen en autoriteit uitstraalt',
-  'Pijlsnelle tech-stack voor betere SEO posities',
-  'Datagedreven sturing op basis van harde KPI\'s'
-];
+export const COMMON_OPPORTUNITIES: Record<string, string[]> = {
+  website: [
+    'Nieuwe branding die vertrouwen en autoriteit uitstraalt',
+    'Pijlsnelle tech-stack voor betere SEO posities',
+    'Conversie-geoptimaliseerde user journeys',
+    'Schaalbaar platform dat meegroeit met de business',
+  ],
+  marketing: [
+    'Inzetten op intentie-gedreven Google Search',
+    'Schaalbare leadgeneratie via Meta & LinkedIn',
+    'Datagedreven sturing op basis van harde KPI\'s',
+    'Retargeting van warme bezoekers voor hogere conversie',
+  ],
+  software: [
+    'AI-gedreven tools voor procesautomatisering',
+    'Centraal platform dat alle data samenbrengt',
+    'Tijdsbesparing van 10+ uur per week door automatisering',
+    'Schaalbare oplossing die medewerkers ontzorgt',
+  ],
+  general: [
+    'Inzetten op intentie-gedreven Google Search',
+    'Schaalbare leadgeneratie via Meta & LinkedIn',
+    'AI-gedreven tools voor procesautomatisering',
+    'Nieuwe branding die vertrouwen en autoriteit uitstraalt',
+    'Pijlsnelle tech-stack voor betere SEO posities',
+    'Datagedreven sturing op basis van harde KPI\'s',
+  ],
+};
 
-export const COMMON_GOALS = [
-  'Directe stijging in kwalitatieve offerte-aanvragen',
-  'Dominante positie in Google op relevante zoektermen',
-  'Structurele groei in maandelijkse omzet via ads',
-  'Professionalisering van de digitale identiteit',
-  'Automatisering van klantcommunicatie/boarding',
-  'Volledig meetbare marketing funnel'
-];
+export const COMMON_GOALS: Record<string, string[]> = {
+  website: [
+    'Professionalisering van de digitale identiteit',
+    'Directe stijging in kwalitatieve offerte-aanvragen',
+    'Snellere laadtijd en hogere Google-ranking',
+  ],
+  marketing: [
+    'Structurele groei in maandelijkse omzet via ads',
+    'Dominante positie in Google op relevante zoektermen',
+    'Volledig meetbare marketing funnel',
+  ],
+  software: [
+    'Automatisering van klantcommunicatie/boarding',
+    'Minimaal 10 uur tijdsbesparing per week',
+    'Eén centraal systeem voor het hele team',
+  ],
+  general: [
+    'Directe stijging in kwalitatieve offerte-aanvragen',
+    'Dominante positie in Google op relevante zoektermen',
+    'Structurele groei in maandelijkse omzet via ads',
+    'Professionalisering van de digitale identiteit',
+    'Automatisering van klantcommunicatie/boarding',
+    'Volledig meetbare marketing funnel',
+  ],
+};
 
 export const DEFAULT_APPROACHES: Record<string, ApproachStep[]> = {
   'Marketing': [
@@ -141,41 +249,72 @@ export const DEFAULT_APPROACHES: Record<string, ApproachStep[]> = {
     { id: '2', phase: 'Architectuur', description: 'Datamodel en UX design van het platform of de tool.' },
     { id: '3', phase: 'Ontwikkeling', description: 'Agile development van de oplossing in sprints.' },
     { id: '4', phase: 'Implementatie', description: 'Testen, feedback verwerken en uitrol in de organisatie.' }
+  ],
+  'Volledig': [
+    { id: '1', phase: 'Kennismaking & Analyse', description: 'Business duik, processen ontleden en gezamenlijke scope bepalen.' },
+    { id: '2', phase: 'Strategie & Design', description: 'Wireframes, merkidentiteit, KPI\'s en kanaalstrategie vastleggen.' },
+    { id: '3', phase: 'Ontwikkeling & Lancering', description: 'Platform bouwen, campagnes opzetten en gefaseerd live gaan.' },
+    { id: '4', phase: 'Groei & Optimalisatie', description: 'Datagedreven bijsturen, schalen wat werkt en continu verbeteren.' }
   ]
 };
 
+/**
+ * Migrates old proposal data that's missing new fields.
+ * Merges saved data with defaults so nothing is undefined.
+ */
+export function migrateProposalData(saved: Partial<ProposalData>): ProposalData {
+  const defaults = getInitialData();
+  const migrated = { ...defaults, ...saved };
+
+  // Old proposals without onboardingCompleted but with content are "completed"
+  if (migrated.onboardingCompleted === undefined && migrated.clientName) {
+    migrated.onboardingCompleted = true;
+  }
+
+  // Old proposals without adPlatforms — infer from content
+  if (!Array.isArray(migrated.adPlatforms)) {
+    migrated.adPlatforms = [];
+    if (migrated.metaAdsContent) migrated.adPlatforms.push('Meta Ads');
+    if (migrated.googleAdsContent) migrated.adPlatforms.push('Google Ads');
+  }
+
+  // Ensure arrays are always arrays
+  if (!Array.isArray(migrated.goals)) migrated.goals = [];
+  if (!Array.isArray(migrated.approach)) migrated.approach = [];
+  if (!Array.isArray(migrated.services)) migrated.services = [];
+  if (!Array.isArray(migrated.analyticsTools)) migrated.analyticsTools = [];
+  if (!Array.isArray(migrated.oneTimeItems)) migrated.oneTimeItems = [];
+  if (!Array.isArray(migrated.monthlyItems)) migrated.monthlyItems = [];
+  if (!Array.isArray(migrated.hiddenSlides)) migrated.hiddenSlides = [];
+
+  return migrated;
+}
+
 export function getInitialData(): ProposalData {
   return {
+    onboardingCompleted: false,
+    hiddenSlides: [],
     clientName: '',
     clientLogo: '',
-    proposalType: 'Website',
+    logoScale: 48,
+    proposalType: '',
     proposalDate: new Date().toLocaleDateString('nl-NL', { day: 'numeric', month: 'long', year: 'numeric' }),
     currentSituation: '',
     opportunities: '',
-    goals: [
-      { id: '1', text: '' },
-      { id: '2', text: '' },
-      { id: '3', text: '' }
-    ],
-    approach: DEFAULT_APPROACHES['Website'],
+    goals: [],
+    approach: [],
+    adPlatforms: [],
     services: [],
     includeAnalytics: true,
-    analyticsTools: ['Google Analytics 4', 'Google Tag Manager'],
-    metaAdsContent: 'Visual storytelling gericht op jouw doelgroep.\nRetargeting van warme websitebezoekers.\nVergroten van merkbekendheid en engagement.',
-    googleAdsContent: 'Inspelen op actieve zoekintentie (SEA).\nPerformance Max voor maximaal bereik.\nContinue optimalisatie op kosten per lead.',
-    contentByClient: 'Huisstijl elementen en logo\'s\nBestaande teksten en beeldmateriaal\nToegang tot benodigde accounts (indien aanwezig)',
-    contentByAgensea: 'Strategisch marketingplan / Design\nInrichting van campagnes of platform\nMaandelijkse rapportage en sturing',
-    oneTimeItems: [
-      { id: '1', description: 'Strategie & Setup', typicalPrice: '€ 1.250,-', agenseaPrice: '€ 950,-' },
-      { id: '2', description: 'Design & Ontwikkeling', typicalPrice: '€ 4.500,-', agenseaPrice: '€ 3.250,-' },
-      { id: 'total', description: 'Totaal Eenmalig', typicalPrice: '€ 5.750,-', agenseaPrice: '€ 4.200,-' }
-    ],
-    monthlyItems: [
-      { id: '1', description: 'Beheer & Optimalisatie', typicalPrice: '€ 850,-', agenseaPrice: '€ 650,-' },
-      { id: '2', description: 'Hosting & Support', typicalPrice: '€ 125,-', agenseaPrice: '€ 85,-' },
-      { id: 'total', description: 'Totaal Maandelijks', typicalPrice: '€ 975,-', agenseaPrice: '€ 735,-' }
-    ],
-    customDisclaimer: 'Genoemde prijzen zijn excl. 21% BTW.\nAdvertentiebudget wordt direct aan het platform betaald.\nMaandelijks opzegbaar na de eerste 3 maanden.',
+    analyticsTools: [],
+    metaAdsContent: '',
+    googleAdsContent: '',
+    linkedinAdsContent: '',
+    contentByClient: '',
+    contentByAgensea: '',
+    oneTimeItems: [],
+    monthlyItems: [],
+    customDisclaimer: '',
     ctaText: 'is aan jou'
   };
 }

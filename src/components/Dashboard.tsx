@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Settings, Eye, FileEdit, Trash2, Copy, Check } from 'lucide-react';
+import { Plus, Settings, Eye, FileEdit, Trash2, Copy, Check, CopyPlus } from 'lucide-react';
 import type { SavedProposal } from '../types';
-import { listProposals, supabase } from '../lib/supabase';
+import { listProposals, saveProposal, supabase } from '../lib/supabase';
 
 export default function Dashboard() {
   const [proposals, setProposals] = useState<SavedProposal[]>([]);
@@ -36,6 +36,14 @@ export default function Dashboard() {
     navigator.clipboard.writeText(url);
     setCopiedId(id);
     setTimeout(() => setCopiedId(null), 2000);
+  };
+
+  const handleDuplicate = async (proposal: SavedProposal, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const newId = crypto.randomUUID();
+    const duplicatedData = { ...proposal.data, clientName: `${proposal.data.clientName} (kopie)` };
+    await saveProposal(newId, duplicatedData);
+    navigate(`/agensea-admin/edit/${newId}`);
   };
 
   const handleDelete = async (id: string, e: React.MouseEvent) => {
@@ -92,7 +100,7 @@ export default function Dashboard() {
                     <p className="text-xs font-bold uppercase tracking-widest text-indigo">{proposal.data.proposalType}</p>
                   </div>
                   {proposal.data.clientLogo && (
-                    <img src={proposal.data.clientLogo} alt="Logo" className="w-12 h-12 rounded-lg object-contain bg-cream p-1" />
+                    <img src={proposal.data.clientLogo} alt="Logo" className="w-12 h-12 rounded-lg object-contain p-1" />
                   )}
                 </div>
 
@@ -113,7 +121,7 @@ export default function Dashboard() {
                   </div>
                 </div>
 
-                <div className="mt-auto grid grid-cols-3 gap-2 pt-6 border-t border-warm-grey">
+                <div className="mt-auto grid grid-cols-4 gap-2 pt-6 border-t border-warm-grey">
                   <button
                     onClick={(e) => { e.stopPropagation(); handleCopyLink(proposal.id); }}
                     className="flex flex-col items-center gap-1.5 text-text-secondary hover:text-indigo transition-colors"
@@ -127,6 +135,13 @@ export default function Dashboard() {
                   >
                     <FileEdit className="w-5 h-5" />
                     <span className="text-[10px] uppercase tracking-wider font-bold">Bewerk</span>
+                  </button>
+                  <button
+                    onClick={(e) => handleDuplicate(proposal, e)}
+                    className="flex flex-col items-center gap-1.5 text-text-secondary hover:text-indigo transition-colors"
+                  >
+                    <CopyPlus className="w-5 h-5" />
+                    <span className="text-[10px] uppercase tracking-wider font-bold">Kopie</span>
                   </button>
                   <button
                     onClick={(e) => handleDelete(proposal.id, e)}
