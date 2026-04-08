@@ -11,6 +11,7 @@ export function DienstenSlide({ data }: { data: ProposalData }) {
       <div className="mb-10 relative z-10 reveal">
         <p className="text-xs uppercase tracking-[0.3em] text-indigo font-bold mb-4">Scope</p>
         <h2 className="text-[3.5rem] font-display font-bold text-dark tracking-tight leading-none">Wat we gaan doen.</h2>
+        <p className="text-text-secondary text-lg leading-relaxed mt-4 max-w-xl">Hieronder vind je een overzicht van de onderdelen die wij voor je oppakken. Samen zorgen ze voor een compleet resultaat.</p>
       </div>
 
       <div className={`flex-1 relative z-10 grid gap-4 content-start ${count <= 2 ? 'grid-cols-1 max-w-2xl' : 'grid-cols-2'}`}>

@@ -11,6 +11,7 @@ export function AnalyticsSlide({ data }: { data: ProposalData }) {
           Meten is weten.<br />
           <span className="text-indigo text-[3rem]">Data-gedreven beslissingen.</span>
         </h2>
+        <p className="text-text-secondary text-lg leading-relaxed mt-4 max-w-xl">We koppelen de juiste tools zodat je precies kunt zien wat werkt en waar de kansen liggen. Geen onderbuikgevoel, maar heldere cijfers.</p>
       </div>
 
       <div className="flex-1 grid grid-cols-2 gap-4 content-start relative z-10">
