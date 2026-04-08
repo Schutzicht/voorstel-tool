@@ -9,7 +9,7 @@ import {
 import clsx from 'clsx';
 import {
   type ProposalData,
-  SERVICES_OPTIONS, ANALYTICS_OPTIONS, getInitialData, DEFAULT_APPROACHES, migrateProposalData
+  ANALYTICS_OPTIONS, getInitialData, DEFAULT_APPROACHES, migrateProposalData
 } from '../types';
 import { getSectionsForData } from './sections';
 import { generateSlides } from './renderSlide';
@@ -26,6 +26,7 @@ import { DoelenForm } from './forms/DoelenForm';
 import { WerkwijzeForm } from './forms/WerkwijzeForm';
 import { AdPlatformsForm } from './forms/AdPlatformsForm';
 import { CheckboxGridForm } from './forms/CheckboxGridForm';
+import { DienstenForm } from './forms/DienstenForm';
 import { ContentForm } from './forms/ContentForm';
 import { InvestmentForm } from './forms/InvestmentForm';
 import { DisclaimerForm } from './forms/DisclaimerForm';
@@ -176,7 +177,7 @@ export default function ProposalTool() {
       case 'adplatforms':
         return <AdPlatformsForm data={data} upd={upd} />;
       case 'diensten':
-        return <CheckboxGridForm label="Selecteer de diensten voor dit voorstel" options={SERVICES_OPTIONS} selected={data.services} onToggle={toggleService} />;
+        return <DienstenForm services={data.services} onToggle={toggleService} onAdd={(s: string) => upd('services', [...data.services, s])} onRemove={(s: string) => upd('services', data.services.filter(x => x !== s))} />;
       case 'analytics':
         return <CheckboxGridForm label="Tools & Tracking selecteren" options={ANALYTICS_OPTIONS} selected={data.analyticsTools} onToggle={toggleAnalytics} />;
       case 'content':

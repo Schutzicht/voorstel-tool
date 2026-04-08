@@ -145,6 +145,20 @@ export const SERVICES_OPTIONS = [
   'Content Creatie'
 ];
 
+export const SERVICE_DESCRIPTIONS: Record<string, string> = {
+  'Maatwerk Website': 'Een professionele website die past bij jouw merk en bezoekers overtuigt om actie te ondernemen.',
+  'Webshop ontwikkeling': 'Een webshop waar klanten makkelijk kunnen bestellen, betalen en hun aankoop kunnen volgen.',
+  'UX & Webdesign': 'Een ontwerp dat er goed uitziet én makkelijk te gebruiken is voor jouw bezoekers.',
+  'SEO Optimalisatie': 'Beter gevonden worden in Google door mensen die zoeken naar wat jij aanbiedt.',
+  'Google Ads (SEA)': 'Advertenties in Google zoekresultaten, precies op het moment dat mensen zoeken naar jouw dienst.',
+  'Meta Ads (Social)': 'Advertenties op Facebook en Instagram gericht op jouw ideale doelgroep.',
+  'LinkedIn Ads': 'Advertenties op LinkedIn gericht op zakelijke beslissers en professionals.',
+  'Conversie Optimalisatie': 'Meer resultaat halen uit je bestaande bezoekers door de website slimmer in te richten.',
+  'Maatwerk Software / AI Tooling': 'Software die aansluit op jouw werkwijze en je team uren per week bespaart.',
+  'E-mail Marketing': 'Gerichte e-mails die klanten informeren, activeren en terugbrengen.',
+  'Content Creatie': 'Teksten, beeld en video die jouw verhaal vertellen en je doelgroep aanspreken.',
+};
+
 export const ANALYTICS_OPTIONS = ['Google Analytics 4', 'Google Tag Manager', 'Google Search Console', 'Google My Business', 'Hotjar', 'Microsoft Clarity', 'Meta Pixel', 'Custom Dashboard'];
 
 export const COMMON_CHALLENGES: Record<string, string[]> = {
