@@ -1,8 +1,8 @@
 import { useState, useRef } from 'react';
-import { ChevronRight, ChevronLeft, Upload, Trash2, Sparkles } from 'lucide-react';
+import { ChevronRight, ChevronLeft, Upload, Trash2, Sparkles, Globe, ShoppingCart, Megaphone, Search, Cog, Camera, Mail, Plus } from 'lucide-react';
 import clsx from 'clsx';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ANALYTICS_OPTIONS, type ProposalData } from '../types';
+import { ANALYTICS_OPTIONS, COMMON_CHALLENGES, COMMON_OPPORTUNITIES, COMMON_GOALS, type ProposalData } from '../types';
 import { generateProposalFromOnboarding, getSuggestionsForCategories, type OnboardingInput } from '../lib/generateDefaults';
 import { uploadLogo, deleteLogo } from '../lib/storage';
 
@@ -16,13 +16,13 @@ interface Props {
 
 // ── Simple service options for admins ────────────────────────────────────────
 const SERVICE_PICKS = [
-  { id: 'website', label: 'Website', icon: '🌐' },
-  { id: 'webshop', label: 'Webshop', icon: '🛒' },
-  { id: 'ads', label: 'Ads / Campagnes', icon: '📣' },
-  { id: 'seo', label: 'SEO', icon: '🔍' },
-  { id: 'software', label: 'Software op maat', icon: '⚙️' },
-  { id: 'content', label: 'Content & Social', icon: '📸' },
-  { id: 'email', label: 'E-mail Marketing', icon: '✉️' },
+  { id: 'website', label: 'Website', Icon: Globe },
+  { id: 'webshop', label: 'Webshop', Icon: ShoppingCart },
+  { id: 'ads', label: 'Ads / Campagnes', Icon: Megaphone },
+  { id: 'seo', label: 'SEO', Icon: Search },
+  { id: 'software', label: 'Software op maat', Icon: Cog },
+  { id: 'content', label: 'Content & Social', Icon: Camera },
+  { id: 'email', label: 'E-mail Marketing', Icon: Mail },
 ] as const;
 
 const AD_PLATFORM_PICKS = [
@@ -74,6 +74,13 @@ export default function OnboardingWizard({ proposalId, existingData, onComplete,
   const [challenges, setChallenges] = useState<string[]>(ws?.challenges || []);
   const [opportunities, setOpportunities] = useState<string[]>(ws?.opportunities || []);
   const [goals, setGoals] = useState<string[]>(ws?.goals || []);
+  const [customChallenge, setCustomChallenge] = useState('');
+  const [customOpportunity, setCustomOpportunity] = useState('');
+  const [customGoal, setCustomGoal] = useState('');
+  // Track all custom-added items so they stay visible even when deselected
+  const [addedChallenges, setAddedChallenges] = useState<string[]>(() => (ws?.challenges || []).filter(c => !Object.values(COMMON_CHALLENGES).flat().includes(c)));
+  const [addedOpportunities, setAddedOpportunities] = useState<string[]>(() => (ws?.opportunities || []).filter(o => !Object.values(COMMON_OPPORTUNITIES).flat().includes(o)));
+  const [addedGoals, setAddedGoals] = useState<string[]>(() => (ws?.goals || []).filter(g => !Object.values(COMMON_GOALS).flat().includes(g)));
 
   // Step 4
   const [oneTimeItems, setOneTimeItems] = useState<ProposalData['oneTimeItems']>(existingData?.oneTimeItems || []);
@@ -262,7 +269,7 @@ export default function OnboardingWizard({ proposalId, existingData, onComplete,
                             : 'border-warm-grey bg-white hover:border-indigo/40'
                         )}
                       >
-                        <span className="text-2xl">{p.icon}</span>
+                        <p.Icon className={clsx('w-6 h-6', picks.includes(p.id) ? 'text-indigo' : 'text-text-secondary')} />
                         <span className="font-display font-bold text-dark">{p.label}</span>
                       </button>
                     ))}
@@ -321,7 +328,7 @@ export default function OnboardingWizard({ proposalId, existingData, onComplete,
                   <div>
                     <label className="block text-sm font-bold text-dark mb-3">Uitdagingen</label>
                     <div className="flex flex-wrap gap-2">
-                      {suggestions.challenges.map(c => (
+                      {[...suggestions.challenges, ...addedChallenges.filter(c => !suggestions.challenges.includes(c))].map(c => (
                         <button
                           key={c}
                           onClick={() => toggle(c, challenges, setChallenges)}
@@ -334,12 +341,43 @@ export default function OnboardingWizard({ proposalId, existingData, onComplete,
                         >{c}</button>
                       ))}
                     </div>
+                    <div className="flex gap-2 mt-3">
+                      <input
+                        type="text"
+                        value={customChallenge}
+                        onChange={e => setCustomChallenge(e.target.value)}
+                        onKeyDown={e => {
+                          if (e.key === 'Enter' && customChallenge.trim()) {
+                            const val = customChallenge.trim();
+                            if (!challenges.includes(val)) setChallenges([...challenges, val]);
+                            if (!addedChallenges.includes(val) && !suggestions.challenges.includes(val)) setAddedChallenges([...addedChallenges, val]);
+                            setCustomChallenge('');
+                          }
+                        }}
+                        placeholder="Typ een eigen uitdaging..."
+                        className="flex-1 text-sm bg-white border border-warm-grey rounded-xl px-4 py-2.5 outline-none focus:border-indigo focus:ring-2 focus:ring-indigo/20 transition-all text-dark"
+                      />
+                      <button
+                        onClick={() => {
+                          const val = customChallenge.trim();
+                          if (val) {
+                            if (!challenges.includes(val)) setChallenges([...challenges, val]);
+                            if (!addedChallenges.includes(val) && !suggestions.challenges.includes(val)) setAddedChallenges([...addedChallenges, val]);
+                            setCustomChallenge('');
+                          }
+                        }}
+                        disabled={!customChallenge.trim()}
+                        className="flex items-center gap-1.5 px-4 py-2.5 bg-indigo text-white text-sm font-semibold rounded-xl hover:bg-indigo-light transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                      >
+                        <Plus className="w-4 h-4" /> Toevoegen
+                      </button>
+                    </div>
                   </div>
 
                   <div>
                     <label className="block text-sm font-bold text-dark mb-3">Kansen</label>
                     <div className="flex flex-wrap gap-2">
-                      {suggestions.opportunities.map(o => (
+                      {[...suggestions.opportunities, ...addedOpportunities.filter(o => !suggestions.opportunities.includes(o))].map(o => (
                         <button
                           key={o}
                           onClick={() => toggle(o, opportunities, setOpportunities)}
@@ -352,12 +390,43 @@ export default function OnboardingWizard({ proposalId, existingData, onComplete,
                         >{o}</button>
                       ))}
                     </div>
+                    <div className="flex gap-2 mt-3">
+                      <input
+                        type="text"
+                        value={customOpportunity}
+                        onChange={e => setCustomOpportunity(e.target.value)}
+                        onKeyDown={e => {
+                          if (e.key === 'Enter' && customOpportunity.trim()) {
+                            const val = customOpportunity.trim();
+                            if (!opportunities.includes(val)) setOpportunities([...opportunities, val]);
+                            if (!addedOpportunities.includes(val) && !suggestions.opportunities.includes(val)) setAddedOpportunities([...addedOpportunities, val]);
+                            setCustomOpportunity('');
+                          }
+                        }}
+                        placeholder="Typ een eigen kans..."
+                        className="flex-1 text-sm bg-white border border-warm-grey rounded-xl px-4 py-2.5 outline-none focus:border-indigo focus:ring-2 focus:ring-indigo/20 transition-all text-dark"
+                      />
+                      <button
+                        onClick={() => {
+                          const val = customOpportunity.trim();
+                          if (val) {
+                            if (!opportunities.includes(val)) setOpportunities([...opportunities, val]);
+                            if (!addedOpportunities.includes(val) && !suggestions.opportunities.includes(val)) setAddedOpportunities([...addedOpportunities, val]);
+                            setCustomOpportunity('');
+                          }
+                        }}
+                        disabled={!customOpportunity.trim()}
+                        className="flex items-center gap-1.5 px-4 py-2.5 bg-indigo text-white text-sm font-semibold rounded-xl hover:bg-indigo-light transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                      >
+                        <Plus className="w-4 h-4" /> Toevoegen
+                      </button>
+                    </div>
                   </div>
 
                   <div>
                     <label className="block text-sm font-bold text-dark mb-3">Doelen *</label>
                     <div className="flex flex-wrap gap-2">
-                      {suggestions.goals.map(g => (
+                      {[...suggestions.goals, ...addedGoals.filter(g => !suggestions.goals.includes(g))].map(g => (
                         <button
                           key={g}
                           onClick={() => toggle(g, goals, setGoals)}
@@ -370,7 +439,38 @@ export default function OnboardingWizard({ proposalId, existingData, onComplete,
                         >{g}</button>
                       ))}
                     </div>
-                    <p className="text-xs text-text-secondary mt-2">Minimaal 1. Meer toevoegen kan later in de editor.</p>
+                    <div className="flex gap-2 mt-3">
+                      <input
+                        type="text"
+                        value={customGoal}
+                        onChange={e => setCustomGoal(e.target.value)}
+                        onKeyDown={e => {
+                          if (e.key === 'Enter' && customGoal.trim()) {
+                            const val = customGoal.trim();
+                            if (!goals.includes(val)) setGoals([...goals, val]);
+                            if (!addedGoals.includes(val) && !suggestions.goals.includes(val)) setAddedGoals([...addedGoals, val]);
+                            setCustomGoal('');
+                          }
+                        }}
+                        placeholder="Typ een eigen doel..."
+                        className="flex-1 text-sm bg-white border border-warm-grey rounded-xl px-4 py-2.5 outline-none focus:border-indigo focus:ring-2 focus:ring-indigo/20 transition-all text-dark"
+                      />
+                      <button
+                        onClick={() => {
+                          const val = customGoal.trim();
+                          if (val) {
+                            if (!goals.includes(val)) setGoals([...goals, val]);
+                            if (!addedGoals.includes(val) && !suggestions.goals.includes(val)) setAddedGoals([...addedGoals, val]);
+                            setCustomGoal('');
+                          }
+                        }}
+                        disabled={!customGoal.trim()}
+                        className="flex items-center gap-1.5 px-4 py-2.5 bg-indigo text-white text-sm font-semibold rounded-xl hover:bg-indigo-light transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                      >
+                        <Plus className="w-4 h-4" /> Toevoegen
+                      </button>
+                    </div>
+                    <p className="text-xs text-text-secondary mt-2">Minimaal 1. Kies uit de suggesties of typ je eigen doel.</p>
                   </div>
                 </div>
               )}

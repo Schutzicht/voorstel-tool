@@ -145,20 +145,24 @@ export const SERVICES_OPTIONS = [
   'Content Creatie'
 ];
 
-export const ANALYTICS_OPTIONS = ['Google Analytics 4', 'Google Tag Manager', 'Hotjar', 'Microsoft Clarity', 'Meta Pixel', 'Custom Dashboard'];
+export const ANALYTICS_OPTIONS = ['Google Analytics 4', 'Google Tag Manager', 'Google Search Console', 'Google My Business', 'Hotjar', 'Microsoft Clarity', 'Meta Pixel', 'Custom Dashboard'];
 
 export const COMMON_CHALLENGES: Record<string, string[]> = {
   website: [
+    'Nog geen professionele website aanwezig',
     'Huidige website is verouderd en traag',
     'Geen mobiel-geoptimaliseerde ervaring',
     'Conversiepercentage blijft achter bij verwachting',
     'Website straalt niet het juiste vertrouwen uit',
+    'Geen duidelijke online vindbaarheid',
+    'Mist een duidelijke call-to-action en conversieflow',
   ],
   marketing: [
     'Lage online zichtbaarheid bij de doelgroep',
     'Te weinig kwalitatieve leads uit online kanalen',
     'Geen inzicht in resultaten van advertenties',
     'Hoge kosten per acquisitie zonder sturing',
+    'Geen structurele marketingstrategie aanwezig',
   ],
   software: [
     'Handmatige processen kosten te veel tijd',
@@ -168,6 +172,7 @@ export const COMMON_CHALLENGES: Record<string, string[]> = {
   ],
   general: [
     'Lage online zichtbaarheid bij de doelgroep',
+    'Nog geen professionele website aanwezig',
     'Huidige website is verouderd en traag',
     'Te weinig kwalitatieve leads uit de website',
     'Conversiepercentage blijft achter bij verwachting',
@@ -178,10 +183,12 @@ export const COMMON_CHALLENGES: Record<string, string[]> = {
 
 export const COMMON_OPPORTUNITIES: Record<string, string[]> = {
   website: [
+    'Professionele online aanwezigheid vanaf dag één',
     'Nieuwe branding die vertrouwen en autoriteit uitstraalt',
     'Pijlsnelle tech-stack voor betere SEO posities',
     'Conversie-geoptimaliseerde user journeys',
     'Schaalbaar platform dat meegroeit met de business',
+    'Direct vindbaar in Google voor relevante zoektermen',
   ],
   marketing: [
     'Inzetten op intentie-gedreven Google Search',
@@ -196,6 +203,7 @@ export const COMMON_OPPORTUNITIES: Record<string, string[]> = {
     'Schaalbare oplossing die medewerkers ontzorgt',
   ],
   general: [
+    'Professionele online aanwezigheid vanaf dag één',
     'Inzetten op intentie-gedreven Google Search',
     'Schaalbare leadgeneratie via Meta & LinkedIn',
     'AI-gedreven tools voor procesautomatisering',
