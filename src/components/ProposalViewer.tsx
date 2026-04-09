@@ -145,7 +145,7 @@ export default function ProposalViewer() {
         ))}
 
         {/* Ondertekenen */}
-        <div className="w-full max-w-2xl no-print">
+        <div id="ondertekenen" className="w-full max-w-2xl no-print scroll-mt-32">
           {signSuccess && signature ? (
             <div className="bg-green-500/10 border border-green-500/20 backdrop-blur rounded-2xl p-8 text-center">
               <CheckCircle2 className="w-12 h-12 text-green-500 mx-auto mb-4" />
@@ -194,6 +194,17 @@ export default function ProposalViewer() {
           )}
         </div>
       </div>
+
+      {/* Sticky onderteken knop */}
+      {!signSuccess && (
+        <button
+          onClick={() => document.getElementById('ondertekenen')?.scrollIntoView({ behavior: 'smooth', block: 'center' })}
+          className="fixed bottom-8 right-8 z-50 bg-indigo text-white px-6 py-4 rounded-full font-display font-bold text-base shadow-2xl shadow-indigo/40 hover:bg-indigo-light hover:scale-105 active:scale-95 transition-all flex items-center gap-2.5 no-print"
+        >
+          <PenLine className="w-5 h-5" />
+          Voorstel ondertekenen
+        </button>
+      )}
 
       <style>{`
         @media print {
