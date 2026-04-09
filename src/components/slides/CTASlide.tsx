@@ -1,7 +1,7 @@
-import { type ProposalData } from '../../types';
+import { type ProposalData, type ProposalSignature } from '../../types';
 import { MeshBackground } from './MeshBackground';
 
-export function CTASlide({ data }: { data: ProposalData }) {
+export function CTASlide({ data, signature }: { data: ProposalData; signature?: ProposalSignature | null }) {
   return (
     <div className="pdf-slide bg-[#FAF9F6] relative flex flex-col p-16 overflow-hidden">
       <MeshBackground />
@@ -41,7 +41,15 @@ export function CTASlide({ data }: { data: ProposalData }) {
             <p className="text-lg font-display font-bold text-dark">agensea.nl</p>
           </div>
         </div>
-        {data.clientLogo && (
+        {signature?.agreed && signature.signatureImage ? (
+          <div className="flex flex-col items-end">
+            <p className="text-[10px] uppercase tracking-widest text-indigo font-bold mb-1">Akkoord — {signature.date}</p>
+            <div className="bg-white/60 backdrop-blur rounded-xl px-4 py-2 border border-indigo/20">
+              <img src={signature.signatureImage} alt="Handtekening" className="h-12 object-contain" style={{ filter: 'invert(1)' }} />
+            </div>
+            <p className="text-xs font-display font-bold text-dark mt-1">{signature.name}</p>
+          </div>
+        ) : data.clientLogo && (
            <img src={data.clientLogo} alt="Client logo" style={{ height: `${data.logoScale ?? 48}px` }} className="object-contain opacity-40 grayscale" />
         )}
       </div>

@@ -65,6 +65,7 @@ export interface ProposalSignature {
   name: string;
   date: string;
   agreed: boolean;
+  signatureImage?: string; // base64 PNG dataURL
 }
 
 export interface SavedProposal {

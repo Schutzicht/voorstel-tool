@@ -7,6 +7,7 @@ import { getProposal, incrementViewCount, signProposal, supabase } from '../lib/
 import { generateSlides } from './renderSlide';
 import { ScaledSlide } from './ScaledSlide';
 import { SlideErrorBoundary } from './SlideErrorBoundary';
+import { SignaturePad } from './SignaturePad';
 import { exportPDF } from '../lib/pdfExport';
 
 export default function ProposalViewer() {
@@ -19,6 +20,7 @@ export default function ProposalViewer() {
   const [signature, setSignature] = useState<ProposalSignature | null>(null);
   const [signName, setSignName] = useState('');
   const [signAgreed, setSignAgreed] = useState(false);
+  const [signImage, setSignImage] = useState<string | null>(null);
   const [isSigning, setIsSigning] = useState(false);
   const [signSuccess, setSignSuccess] = useState(false);
 
@@ -74,16 +76,17 @@ export default function ProposalViewer() {
     );
   }
 
-  const slides = generateSlides(data);
+  const slides = generateSlides(data, signature);
 
   const handleSign = async () => {
-    if (!id || !signName.trim() || !signAgreed) return;
+    if (!id || !signName.trim() || !signAgreed || !signImage) return;
     setIsSigning(true);
     try {
       const sig: ProposalSignature = {
         name: signName.trim(),
         date: new Date().toLocaleDateString('nl-NL', { day: 'numeric', month: 'long', year: 'numeric' }),
         agreed: true,
+        signatureImage: signImage,
       };
       await signProposal(id, sig);
       setSignature(sig);
@@ -150,9 +153,14 @@ export default function ProposalViewer() {
             <div className="bg-green-500/10 border border-green-500/20 backdrop-blur rounded-2xl p-8 text-center">
               <CheckCircle2 className="w-12 h-12 text-green-500 mx-auto mb-4" />
               <h3 className="font-display font-bold text-white text-2xl mb-2">Voorstel ondertekend</h3>
-              <p className="text-white/60 text-sm">
+              <p className="text-white/60 text-sm mb-4">
                 Ondertekend door <span className="text-white font-medium">{signature.name}</span> op {signature.date}
               </p>
+              {signature.signatureImage && (
+                <div className="bg-white/5 rounded-xl p-4 inline-block">
+                  <img src={signature.signatureImage} alt="Handtekening" className="h-20 object-contain" />
+                </div>
+              )}
             </div>
           ) : (
             <div className="bg-white/5 border border-white/10 backdrop-blur rounded-2xl p-8">
@@ -171,6 +179,7 @@ export default function ProposalViewer() {
                   placeholder="Je volledige naam"
                   className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/10 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-indigo transition-colors"
                 />
+                <SignaturePad onChange={setSignImage} />
                 <label className="flex items-start gap-3 cursor-pointer group">
                   <button
                     onClick={() => setSignAgreed(!signAgreed)}
@@ -184,7 +193,7 @@ export default function ProposalViewer() {
                 </label>
                 <button
                   onClick={handleSign}
-                  disabled={!signName.trim() || !signAgreed || isSigning}
+                  disabled={!signName.trim() || !signAgreed || !signImage || isSigning}
                   className="w-full py-3.5 rounded-xl bg-indigo text-white font-display font-bold text-base hover:bg-indigo-light transition-all disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   {isSigning ? <><Loader2 className="w-4 h-4 animate-spin" /> Ondertekenen...</> : 'Voorstel ondertekenen'}

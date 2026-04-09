@@ -1,5 +1,5 @@
 import { type ReactNode } from 'react';
-import type { ProposalData } from '../types';
+import type { ProposalData, ProposalSignature } from '../types';
 import {
   CoverSlide, AgencySlide, ClientMarqueeSlide, SituatieSlide, AboutTeamSlide, WerkwijzeSlide,
   AdPlatformsSlide, DienstenSlide, AnalyticsSlide, ContentSlide, EenmaligeInvesteringSlide,
@@ -17,7 +17,7 @@ export interface SlideEntry {
  * Generates slides dynamically based on data.
  * Skips irrelevant slides based on what was selected.
  */
-export function generateSlides(data: ProposalData): SlideEntry[] {
+export function generateSlides(data: ProposalData, signature?: ProposalSignature | null): SlideEntry[] {
   const slides: SlideEntry[] = [
     { key: 'cover', label: 'Cover', node: <CoverSlide data={data} /> },
     { key: 'agency', label: 'Agensea', node: <AgencySlide data={data} /> },
@@ -83,7 +83,7 @@ export function generateSlides(data: ProposalData): SlideEntry[] {
 
   slides.push(
     { key: 'disclaimer', label: 'Disclaimer', node: <DisclaimerSlide data={data} /> },
-    { key: 'cta', label: 'Afsluiting', node: <CTASlide data={data} /> },
+    { key: 'cta', label: 'Afsluiting', node: <CTASlide data={data} signature={signature} /> },
   );
 
   // Filter out manually hidden slides

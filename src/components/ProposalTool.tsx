@@ -9,6 +9,7 @@ import {
 import clsx from 'clsx';
 import {
   type ProposalData,
+  type ProposalSignature,
   ANALYTICS_OPTIONS, getInitialData, DEFAULT_APPROACHES, migrateProposalData
 } from '../types';
 import { getSectionsForData } from './sections';
@@ -37,6 +38,7 @@ export default function ProposalTool() {
   const navigate = useNavigate();
 
   const [data, setData] = useState<ProposalData>(getInitialData());
+  const [signature, setSignature] = useState<ProposalSignature | null>(null);
   const [activeSection, setActiveSection] = useState<string>('cover');
   const [showFullPreview, setShowFullPreview] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -46,14 +48,17 @@ export default function ProposalTool() {
   const [isLoading, setIsLoading] = useState(true);
   const [showWizard, setShowWizard] = useState(false);
 
-  const slides = useMemo(() => generateSlides(data), [data]);
+  const slides = useMemo(() => generateSlides(data, signature), [data, signature]);
   const sections = useMemo(() => getSectionsForData(data), [data]);
 
   // Fetch existing proposal
   useEffect(() => {
     if (id) {
       getProposal(id).then(res => {
-        if (res) setData(migrateProposalData(res.data));
+        if (res) {
+          setData(migrateProposalData(res.data));
+          if (res.signature) setSignature(res.signature);
+        }
       }).catch(console.error).finally(() => setIsLoading(false));
     } else {
       setIsLoading(false);
@@ -247,6 +252,11 @@ export default function ProposalTool() {
         </div>
         <div className="w-[1px] h-5 bg-warm-grey shrink-0"></div>
         <span className="text-sm text-text-secondary font-medium truncate">{data.clientName || 'Nieuw voorstel'} — {data.proposalType}</span>
+        {signature?.agreed && (
+          <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-green-500/10 text-green-600 text-xs font-bold border border-green-500/20" title={`Ondertekend door ${signature.name} op ${signature.date}`}>
+            <Check className="w-3 h-3" /> Ondertekend
+          </span>
+        )}
         <div className="ml-auto flex items-center gap-3 shrink-0">
           <button
             onClick={() => {
