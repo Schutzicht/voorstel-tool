@@ -30,6 +30,7 @@ import { CheckboxGridForm } from './forms/CheckboxGridForm';
 import { DienstenForm } from './forms/DienstenForm';
 import { ContentForm } from './forms/ContentForm';
 import { InvestmentForm } from './forms/InvestmentForm';
+import { InvestmentOptionsForm } from './forms/InvestmentOptionsForm';
 import { DisclaimerForm } from './forms/DisclaimerForm';
 import { CTAForm } from './forms/CTAForm';
 
@@ -195,9 +196,44 @@ export default function ProposalTool() {
       case 'content':
         return <ContentForm data={data} upd={upd} />;
       case 'eenmalig':
-        return <InvestmentForm items={data.oneTimeItems} onChange={v => upd('oneTimeItems', v)} />;
+        return (
+          <div className="space-y-4">
+            <button
+              onClick={() => {
+                const next = !data.hasInvestmentOptions;
+                setData(prev => ({
+                  ...prev,
+                  hasInvestmentOptions: next,
+                  investmentOptions: next && prev.investmentOptions.length === 0
+                    ? [
+                        { id: 'a', name: 'Optie A', subtitle: '', description: '', oneTimeItems: [], monthlyItems: [] },
+                        { id: 'b', name: 'Optie B', subtitle: '', description: '', oneTimeItems: [], monthlyItems: [] },
+                      ]
+                    : prev.investmentOptions,
+                }));
+              }}
+              className="w-full text-left px-4 py-3 rounded-xl border border-warm-grey bg-white hover:border-indigo transition-colors flex items-center justify-between gap-2"
+            >
+              <div>
+                <div className="text-sm font-bold text-dark">Bied klant 2 pakketten aan</div>
+                <div className="text-xs text-text-secondary mt-0.5">Vergelijk twee opties op één slide. De klant kiest bij ondertekening.</div>
+              </div>
+              <div className={clsx('w-10 h-6 rounded-full transition-colors relative shrink-0', data.hasInvestmentOptions ? 'bg-indigo' : 'bg-warm-grey')}>
+                <div className={clsx('absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-all', data.hasInvestmentOptions ? 'left-[18px]' : 'left-0.5')}></div>
+              </div>
+            </button>
+            {!data.hasInvestmentOptions && (
+              <InvestmentForm items={data.oneTimeItems} onChange={v => upd('oneTimeItems', v)} />
+            )}
+            {data.hasInvestmentOptions && (
+              <p className="text-xs text-text-secondary italic">Opties-modus staat aan — bewerk de pakketten in het tabblad "Investering (opties)" links in het menu.</p>
+            )}
+          </div>
+        );
       case 'maandelijks':
         return <InvestmentForm items={data.monthlyItems} onChange={v => upd('monthlyItems', v)} />;
+      case 'investeringopties':
+        return <InvestmentOptionsForm options={data.investmentOptions} onChange={v => upd('investmentOptions', v)} />;
       case 'disclaimer':
         return <DisclaimerForm data={data} upd={upd} />;
       case 'cta':

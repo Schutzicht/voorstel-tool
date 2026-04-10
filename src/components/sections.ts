@@ -21,6 +21,7 @@ const ALL_SECTIONS: FormSection[] = [
   { id: 'content', slideLabel: 'Content', title: 'Content & Samenwerking' },
   { id: 'eenmalig', slideLabel: 'Investering (1x)', title: 'Eenmalige Investering' },
   { id: 'maandelijks', slideLabel: 'Investering (mnd)', title: 'Maandelijkse Investering' },
+  { id: 'investeringopties', slideLabel: 'Investering (opties)', title: 'Investeringsopties (A/B)' },
   { id: 'disclaimer', slideLabel: 'Disclaimer', title: 'Voorwaarden' },
   { id: 'cta', slideLabel: 'Afsluiting', title: 'Afsluiting & CTA' },
 ];
@@ -40,8 +41,9 @@ export function getSectionsForData(data: ProposalData): FormSection[] {
         return type.includes('website') || type.includes('software') || type.includes('webshop')
           || data.services.some(svc => svc.toLowerCase().includes('website') || svc.toLowerCase().includes('webshop') || svc.toLowerCase().includes('software'));
       }
-      case 'eenmalig': return data.oneTimeItems.length > 0;
-      case 'maandelijks': return data.monthlyItems.length > 0;
+      case 'eenmalig': return !data.hasInvestmentOptions && data.oneTimeItems.length > 0;
+      case 'maandelijks': return !data.hasInvestmentOptions && data.monthlyItems.length > 0;
+      case 'investeringopties': return data.hasInvestmentOptions;
       default: return true;
     }
   });

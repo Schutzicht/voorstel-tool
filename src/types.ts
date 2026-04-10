@@ -54,6 +54,10 @@ export interface ProposalData {
   // Maandelijkse investering
   monthlyItems: InvestmentItem[];
 
+  // Optionele A/B opties (vergelijking van pakketten)
+  hasInvestmentOptions: boolean;
+  investmentOptions: InvestmentOption[];
+
   // Disclaimer
   customDisclaimer: string;
 
@@ -66,6 +70,8 @@ export interface ProposalSignature {
   date: string;
   agreed: boolean;
   signatureImage?: string; // base64 PNG dataURL
+  selectedOptionId?: string; // when proposal has investment options
+  selectedOptionName?: string; // human-readable name (for display)
 }
 
 export interface SavedProposal {
@@ -93,6 +99,15 @@ export interface InvestmentItem {
   description: string;
   agenseaPrice: string;
   typicalPrice: string;
+}
+
+export interface InvestmentOption {
+  id: string;
+  name: string;          // e.g. "Optie A"
+  subtitle: string;      // e.g. "Basis website"
+  description: string;   // longer explanation
+  oneTimeItems: InvestmentItem[];
+  monthlyItems: InvestmentItem[];
 }
 
 // ── Ad platform options ─────────────────────────────────────────────────────
@@ -389,6 +404,8 @@ export function migrateProposalData(saved: Partial<ProposalData>): ProposalData 
   if (!Array.isArray(migrated.monthlyItems)) migrated.monthlyItems = [];
   if (!Array.isArray(migrated.hiddenSlides)) migrated.hiddenSlides = [];
   if (!migrated.serviceDescriptions || typeof migrated.serviceDescriptions !== 'object') migrated.serviceDescriptions = {};
+  if (typeof migrated.hasInvestmentOptions !== 'boolean') migrated.hasInvestmentOptions = false;
+  if (!Array.isArray(migrated.investmentOptions)) migrated.investmentOptions = [];
 
   return migrated;
 }
@@ -418,6 +435,8 @@ export function getInitialData(): ProposalData {
     contentByAgensea: '',
     oneTimeItems: [],
     monthlyItems: [],
+    hasInvestmentOptions: false,
+    investmentOptions: [],
     customDisclaimer: '',
     ctaText: 'is aan jou'
   };

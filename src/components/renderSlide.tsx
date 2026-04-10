@@ -3,7 +3,7 @@ import type { ProposalData, ProposalSignature } from '../types';
 import {
   CoverSlide, AgencySlide, ClientMarqueeSlide, SituatieSlide, AboutTeamSlide, WerkwijzeSlide,
   AdPlatformsSlide, DienstenSlide, AnalyticsSlide, ContentSlide, EenmaligeInvesteringSlide,
-  MaandelijksSlide, DisclaimerSlide, CTASlide, MockupsSlide
+  MaandelijksSlide, DisclaimerSlide, CTASlide, MockupsSlide, InvestmentOptionsSlide
 } from './slides';
 import { DoelSlide, getGoalSlideCount } from './slides/DoelSlide';
 
@@ -73,12 +73,16 @@ export function generateSlides(data: ProposalData, signature?: ProposalSignature
     { key: 'content', label: 'Content', node: <ContentSlide data={data} /> },
   );
 
-  // Investering slides — only if there are items
-  if (data.oneTimeItems.length > 0 || !data.onboardingCompleted) {
-    slides.push({ key: 'eenmalig', label: 'Investering (1x)', node: <EenmaligeInvesteringSlide data={data} /> });
-  }
-  if (data.monthlyItems.length > 0 || !data.onboardingCompleted) {
-    slides.push({ key: 'maandelijks', label: 'Investering (mnd)', node: <MaandelijksSlide data={data} /> });
+  // Investering slides — opties-modus vervangt de losse slides
+  if (data.hasInvestmentOptions && data.investmentOptions.length > 0) {
+    slides.push({ key: 'investeringopties', label: 'Investering (opties)', node: <InvestmentOptionsSlide data={data} /> });
+  } else {
+    if (data.oneTimeItems.length > 0 || !data.onboardingCompleted) {
+      slides.push({ key: 'eenmalig', label: 'Investering (1x)', node: <EenmaligeInvesteringSlide data={data} /> });
+    }
+    if (data.monthlyItems.length > 0 || !data.onboardingCompleted) {
+      slides.push({ key: 'maandelijks', label: 'Investering (mnd)', node: <MaandelijksSlide data={data} /> });
+    }
   }
 
   slides.push(

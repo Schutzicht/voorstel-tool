@@ -21,6 +21,7 @@ export default function ProposalViewer() {
   const [signName, setSignName] = useState('');
   const [signAgreed, setSignAgreed] = useState(false);
   const [signImage, setSignImage] = useState<string | null>(null);
+  const [selectedOptionId, setSelectedOptionId] = useState<string>('');
   const [isSigning, setIsSigning] = useState(false);
   const [signSuccess, setSignSuccess] = useState(false);
 
@@ -78,15 +79,20 @@ export default function ProposalViewer() {
 
   const slides = generateSlides(data, signature);
 
+  const hasOptions = data?.hasInvestmentOptions && (data?.investmentOptions?.length ?? 0) > 0;
+
   const handleSign = async () => {
     if (!id || !signName.trim() || !signAgreed || !signImage) return;
+    if (hasOptions && !selectedOptionId) return;
     setIsSigning(true);
     try {
+      const chosenOption = hasOptions ? data?.investmentOptions.find(o => o.id === selectedOptionId) : null;
       const sig: ProposalSignature = {
         name: signName.trim(),
         date: new Date().toLocaleDateString('nl-NL', { day: 'numeric', month: 'long', year: 'numeric' }),
         agreed: true,
         signatureImage: signImage,
+        ...(chosenOption ? { selectedOptionId: chosenOption.id, selectedOptionName: chosenOption.name + (chosenOption.subtitle ? ` — ${chosenOption.subtitle}` : '') } : {}),
       };
       await signProposal(id, sig);
       setSignature(sig);
@@ -153,9 +159,14 @@ export default function ProposalViewer() {
             <div className="bg-green-500/10 border border-green-500/20 backdrop-blur rounded-2xl p-8 text-center">
               <CheckCircle2 className="w-12 h-12 text-green-500 mx-auto mb-4" />
               <h3 className="font-display font-bold text-white text-2xl mb-2">Voorstel ondertekend</h3>
-              <p className="text-white/60 text-sm mb-4">
+              <p className="text-white/60 text-sm mb-2">
                 Ondertekend door <span className="text-white font-medium">{signature.name}</span> op {signature.date}
               </p>
+              {signature.selectedOptionName && (
+                <p className="text-white/60 text-sm mb-4">
+                  Gekozen pakket: <span className="text-indigo font-medium">{signature.selectedOptionName}</span>
+                </p>
+              )}
               {signature.signatureImage && (
                 <div className="bg-white/5 rounded-xl p-4 inline-block">
                   <img src={signature.signatureImage} alt="Handtekening" className="h-20 object-contain" />
@@ -172,6 +183,33 @@ export default function ProposalViewer() {
                 Door te ondertekenen ga je akkoord met het voorstel en de genoemde voorwaarden.
               </p>
               <div className="space-y-4">
+                {hasOptions && (
+                  <div className="space-y-2">
+                    <p className="text-white/60 text-xs uppercase tracking-widest font-bold">Kies je pakket</p>
+                    <div className="grid gap-2">
+                      {data.investmentOptions.map((opt, idx) => {
+                        const active = selectedOptionId === opt.id;
+                        return (
+                          <button
+                            key={opt.id}
+                            type="button"
+                            onClick={() => setSelectedOptionId(opt.id)}
+                            className={`text-left px-4 py-3 rounded-xl border transition-all flex items-center gap-3 ${active ? 'border-indigo bg-indigo/15' : 'border-white/10 bg-white/5 hover:border-white/30'}`}
+                          >
+                            <span className={`w-7 h-7 rounded-lg font-display font-bold text-sm flex items-center justify-center shrink-0 ${active ? 'bg-indigo text-white' : 'bg-white/10 text-white/70'}`}>
+                              {String.fromCharCode(65 + idx)}
+                            </span>
+                            <div className="min-w-0 flex-1">
+                              <div className="text-white text-sm font-bold truncate">{opt.name}</div>
+                              {opt.subtitle && <div className="text-white/50 text-xs truncate">{opt.subtitle}</div>}
+                            </div>
+                            {active && <Check className="w-4 h-4 text-indigo shrink-0" />}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
                 <input
                   type="text"
                   value={signName}
@@ -193,7 +231,7 @@ export default function ProposalViewer() {
                 </label>
                 <button
                   onClick={handleSign}
-                  disabled={!signName.trim() || !signAgreed || !signImage || isSigning}
+                  disabled={!signName.trim() || !signAgreed || !signImage || (hasOptions && !selectedOptionId) || isSigning}
                   className="w-full py-3.5 rounded-xl bg-indigo text-white font-display font-bold text-base hover:bg-indigo-light transition-all disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   {isSigning ? <><Loader2 className="w-4 h-4 animate-spin" /> Ondertekenen...</> : 'Voorstel ondertekenen'}

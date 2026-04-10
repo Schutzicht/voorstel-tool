@@ -48,6 +48,9 @@ export function CTASlide({ data, signature }: { data: ProposalData; signature?: 
               <img src={signature.signatureImage} alt="Handtekening" className="h-12 object-contain" style={{ filter: 'invert(1)' }} />
             </div>
             <p className="text-xs font-display font-bold text-dark mt-1">{signature.name}</p>
+            {signature.selectedOptionName && (
+              <p className="text-[10px] uppercase tracking-widest text-indigo font-bold mt-1">Gekozen: {signature.selectedOptionName}</p>
+            )}
           </div>
         ) : data.clientLogo && (
            <img src={data.clientLogo} alt="Client logo" style={{ height: `${data.logoScale ?? 48}px` }} className="object-contain opacity-40 grayscale" />

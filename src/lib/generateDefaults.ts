@@ -112,6 +112,9 @@ export function generateProposalFromOnboarding(input: OnboardingInput): Proposal
       ? input.monthlyItems
       : generateDefaultPricing(cats, 'monthly'),
 
+    hasInvestmentOptions: false,
+    investmentOptions: [],
+
     customDisclaimer: 'Genoemde prijzen zijn excl. 21% BTW.\nAdvertentiebudget wordt direct aan het platform betaald.\nMaandelijks opzegbaar na de eerste 3 maanden.\nPrijzen zijn geldig tot 30 dagen na dagtekening.',
 
     ctaText: 'is aan jou',

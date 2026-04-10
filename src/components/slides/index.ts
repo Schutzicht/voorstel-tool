@@ -13,5 +13,6 @@ export { MockupsSlide } from './MockupsSlide';
 export { ContentSlide } from './ContentSlide';
 export { EenmaligeInvesteringSlide } from './EenmaligeInvesteringSlide';
 export { MaandelijksSlide } from './MaandelijksSlide';
+export { InvestmentOptionsSlide } from './InvestmentOptionsSlide';
 export { DisclaimerSlide } from './DisclaimerSlide';
 export { CTASlide } from './CTASlide';
