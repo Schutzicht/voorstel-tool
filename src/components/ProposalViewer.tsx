@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Download, Copy, Check, Loader2, PenLine, CheckCircle2 } from 'lucide-react';
+import { Download, Copy, Check, Loader2, PenLine, CheckCircle2, Maximize2, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import type { ProposalData, ProposalSignature } from '../types';
 import { migrateProposalData } from '../types';
 import { getProposal, incrementViewCount, signProposal, supabase } from '../lib/supabase';
@@ -24,6 +24,7 @@ export default function ProposalViewer() {
   const [selectedOptionId, setSelectedOptionId] = useState<string>('');
   const [isSigning, setIsSigning] = useState(false);
   const [signSuccess, setSignSuccess] = useState(false);
+  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
 
   useEffect(() => {
     async function fetch() {
@@ -57,6 +58,22 @@ export default function ProposalViewer() {
       return () => { supabase.removeChannel(channel); };
     }
   }, [id]);
+
+  useEffect(() => {
+    if (expandedIndex === null) return;
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setExpandedIndex(null);
+      if (e.key === 'ArrowRight') setExpandedIndex(i => (i !== null ? i + 1 : i));
+      if (e.key === 'ArrowLeft') setExpandedIndex(i => (i !== null && i > 0 ? i - 1 : i));
+    };
+    window.addEventListener('keydown', onKey);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener('keydown', onKey);
+    };
+  }, [expandedIndex]);
 
   if (loading) {
     return (
@@ -151,9 +168,19 @@ export default function ProposalViewer() {
       <div className="pt-20 sm:pt-24 pb-24 sm:pb-16 px-3 sm:px-8 md:px-12 lg:px-20 space-y-6 sm:space-y-12 max-w-7xl mx-auto flex flex-col items-center">
         {slides.map((slide, i) => (
           <SlideErrorBoundary key={slide.key} slideIndex={i}>
-            <ScaledSlide className="shadow-2xl rounded-2xl overflow-hidden print-w-auto print-shadow-none" data-slide>
-              {slide.node}
-            </ScaledSlide>
+            <div className="relative w-full group">
+              <ScaledSlide className="shadow-2xl rounded-2xl overflow-hidden print-w-auto print-shadow-none" data-slide>
+                {slide.node}
+              </ScaledSlide>
+              <button
+                onClick={() => setExpandedIndex(i)}
+                className="absolute top-2 right-2 sm:top-3 sm:right-3 bg-dark/70 hover:bg-dark backdrop-blur text-white p-2 rounded-full shadow-lg transition-all sm:opacity-0 sm:group-hover:opacity-100 no-print z-10"
+                title="Vergroten"
+                aria-label="Slide vergroten"
+              >
+                <Maximize2 className="w-4 h-4" />
+              </button>
+            </div>
           </SlideErrorBoundary>
         ))}
 
@@ -245,6 +272,58 @@ export default function ProposalViewer() {
           )}
         </div>
       </div>
+
+      {/* Fullscreen slide modal */}
+      {expandedIndex !== null && slides[expandedIndex] && (
+        <div className="fixed inset-0 z-[60] bg-black/95 backdrop-blur-md flex flex-col no-print" onClick={() => setExpandedIndex(null)}>
+          {/* Top bar */}
+          <div className="flex items-center justify-between px-4 sm:px-6 py-4 text-white shrink-0" onClick={e => e.stopPropagation()}>
+            <div className="text-sm font-medium text-white/60">
+              Slide <span className="text-white font-bold">{expandedIndex + 1}</span> / {slides.length}
+              <span className="hidden sm:inline text-white/40 ml-2">— {slides[expandedIndex].label}</span>
+            </div>
+            <button
+              onClick={() => setExpandedIndex(null)}
+              className="bg-white/10 hover:bg-white/20 p-2.5 rounded-full transition-colors"
+              aria-label="Sluiten"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+
+          {/* Slide */}
+          <div className="flex-1 min-h-0 flex items-center justify-center px-2 sm:px-16 pb-4" onClick={e => e.stopPropagation()}>
+            <div className="w-full max-w-[min(100%,calc((100vh-10rem)*1.7778))]">
+              <ScaledSlide className="shadow-2xl rounded-xl overflow-hidden">
+                {slides[expandedIndex].node}
+              </ScaledSlide>
+            </div>
+          </div>
+
+          {/* Nav bar */}
+          <div className="flex items-center justify-center gap-3 sm:gap-4 px-4 py-4 shrink-0" onClick={e => e.stopPropagation()}>
+            <button
+              onClick={() => setExpandedIndex(i => (i !== null && i > 0 ? i - 1 : i))}
+              disabled={expandedIndex === 0}
+              className="bg-white/10 hover:bg-white/20 text-white p-3 rounded-full transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+              aria-label="Vorige slide"
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+            <div className="text-white/60 text-xs sm:text-sm font-medium min-w-[80px] text-center">
+              {expandedIndex + 1} / {slides.length}
+            </div>
+            <button
+              onClick={() => setExpandedIndex(i => (i !== null && i < slides.length - 1 ? i + 1 : i))}
+              disabled={expandedIndex === slides.length - 1}
+              className="bg-white/10 hover:bg-white/20 text-white p-3 rounded-full transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+              aria-label="Volgende slide"
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Sticky onderteken knop */}
       {!signSuccess && (
