@@ -3,9 +3,6 @@ import { type ProposalData } from '../../types';
 export function ClientMarqueeSlide({ data }: { data: ProposalData }) {
   const logos = [
     { src: "/logos-hero/Logo_Adrz_RGB.png", alt: "ADRZ" },
-    { src: "/logos-hero/HZ.svg", alt: "HZ" },
-    { src: "/logos-hero/Innovatiepunt KAAP.svg", alt: "Innovatiepunt KAAP" },
-    { src: "/logos-hero/Dockwize.svg", alt: "Dockwize" },
     { src: "/logos-hero/Bouwgroep R&D.svg", alt: "Bouwgroep R&D" },
     { src: "/logos-hero/Widea.svg", alt: "Widea" },
     { src: "/logos-hero/Arieke van liere.svg", alt: "Arieke van Liere" },
