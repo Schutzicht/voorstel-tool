@@ -116,35 +116,39 @@ export default function ProposalViewer() {
   return (
     <div className="min-h-screen bg-[#1a1a1a] relative">
       {/* Client HUD */}
-      <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-4 bg-dark/90 backdrop-blur border border-white/10 px-6 py-3 rounded-full shadow-2xl no-print">
-        <div className="flex bg-white/10 rounded-full px-4 py-1.5 shadow-inner">
-           <span className="font-display font-bold text-white text-base">Agensea</span>
-           <span className="text-white/40 mx-2">/</span>
-           <span className="font-medium text-white/80 text-sm truncate max-w-[150px]">{data.clientName || 'Voorstel'}</span>
+      <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-1.5 sm:gap-3 bg-dark/90 backdrop-blur border border-white/10 px-2.5 sm:px-5 py-2 sm:py-2.5 rounded-full shadow-2xl no-print max-w-[calc(100vw-1rem)]">
+        <div className="flex items-center bg-white/10 rounded-full px-3 sm:px-4 py-1 sm:py-1.5 shadow-inner min-w-0">
+           <span className="font-display font-bold text-white text-sm sm:text-base shrink-0">Agensea</span>
+           <span className="text-white/40 mx-1.5 sm:mx-2 shrink-0">/</span>
+           <span className="font-medium text-white/80 text-xs sm:text-sm truncate max-w-[80px] sm:max-w-[150px]">{data.clientName || 'Voorstel'}</span>
         </div>
-        <div className="w-[1px] h-4 bg-white/20"></div>
+        <div className="w-[1px] h-4 bg-white/20 hidden sm:block"></div>
         <button
           onClick={() => {
             navigator.clipboard.writeText(window.location.href);
             setCopied(true);
             setTimeout(() => setCopied(false), 2000);
           }}
-          className="text-white/70 hover:text-white px-3 py-2 rounded-full text-sm font-medium flex items-center gap-2 transition-colors"
+          className="text-white/70 hover:text-white p-2 sm:px-3 sm:py-2 rounded-full text-sm font-medium flex items-center gap-2 transition-colors shrink-0"
+          title="Link delen"
         >
-          {copied ? <><Check className="w-4 h-4 text-green-400" /> Gekopieerd</> : <><Copy className="w-4 h-4" /> Link delen</>}
+          {copied ? <Check className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4" />}
+          <span className="hidden sm:inline">{copied ? 'Gekopieerd' : 'Link delen'}</span>
         </button>
-        <div className="w-[1px] h-4 bg-white/20"></div>
+        <div className="w-[1px] h-4 bg-white/20 hidden sm:block"></div>
         <button
           onClick={handleExportPDF}
           disabled={isExporting}
-          className="bg-indigo text-white px-5 py-2 rounded-full text-sm font-semibold flex items-center gap-2 hover:bg-indigo-light transition-colors transform hover:scale-105 active:scale-95 duration-200 disabled:opacity-50 disabled:transform-none"
+          className="bg-indigo text-white p-2 sm:px-5 sm:py-2 rounded-full text-sm font-semibold flex items-center gap-2 hover:bg-indigo-light transition-colors disabled:opacity-50 shrink-0"
+          title="Opslaan als PDF"
         >
-          {isExporting ? <><Loader2 className="w-4 h-4 animate-spin" /> Exporteren...</> : <><Download className="w-4 h-4" /> Opslaan als PDF</>}
+          {isExporting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
+          <span className="hidden sm:inline">{isExporting ? 'Exporteren...' : 'PDF'}</span>
         </button>
       </div>
 
       {/* Slides */}
-      <div className="pt-24 pb-16 px-4 md:px-12 lg:px-20 space-y-12 max-w-7xl mx-auto flex flex-col items-center">
+      <div className="pt-20 sm:pt-24 pb-24 sm:pb-16 px-3 sm:px-8 md:px-12 lg:px-20 space-y-6 sm:space-y-12 max-w-7xl mx-auto flex flex-col items-center">
         {slides.map((slide, i) => (
           <SlideErrorBoundary key={slide.key} slideIndex={i}>
             <ScaledSlide className="shadow-2xl rounded-2xl overflow-hidden print-w-auto print-shadow-none" data-slide>
@@ -156,7 +160,7 @@ export default function ProposalViewer() {
         {/* Ondertekenen */}
         <div id="ondertekenen" className="w-full max-w-2xl no-print scroll-mt-32">
           {signSuccess && signature ? (
-            <div className="bg-green-500/10 border border-green-500/20 backdrop-blur rounded-2xl p-8 text-center">
+            <div className="bg-green-500/10 border border-green-500/20 backdrop-blur rounded-2xl p-6 sm:p-8 text-center">
               <CheckCircle2 className="w-12 h-12 text-green-500 mx-auto mb-4" />
               <h3 className="font-display font-bold text-white text-2xl mb-2">Voorstel ondertekend</h3>
               <p className="text-white/60 text-sm mb-2">
@@ -174,7 +178,7 @@ export default function ProposalViewer() {
               )}
             </div>
           ) : (
-            <div className="bg-white/5 border border-white/10 backdrop-blur rounded-2xl p-8">
+            <div className="bg-white/5 border border-white/10 backdrop-blur rounded-2xl p-5 sm:p-8">
               <div className="flex items-center gap-3 mb-6">
                 <PenLine className="w-6 h-6 text-indigo" />
                 <h3 className="font-display font-bold text-white text-2xl">Akkoord? Teken hier.</h3>
@@ -246,10 +250,11 @@ export default function ProposalViewer() {
       {!signSuccess && (
         <button
           onClick={() => document.getElementById('ondertekenen')?.scrollIntoView({ behavior: 'smooth', block: 'center' })}
-          className="fixed bottom-8 right-8 z-50 bg-indigo text-white px-6 py-4 rounded-full font-display font-bold text-base shadow-2xl shadow-indigo/40 hover:bg-indigo-light hover:scale-105 active:scale-95 transition-all flex items-center gap-2.5 no-print"
+          className="fixed bottom-4 right-4 sm:bottom-8 sm:right-8 z-50 bg-indigo text-white px-5 py-3 sm:px-6 sm:py-4 rounded-full font-display font-bold text-sm sm:text-base shadow-2xl shadow-indigo/40 hover:bg-indigo-light active:scale-95 transition-all flex items-center gap-2 sm:gap-2.5 no-print"
         >
-          <PenLine className="w-5 h-5" />
-          Voorstel ondertekenen
+          <PenLine className="w-4 h-4 sm:w-5 sm:h-5" />
+          <span className="hidden sm:inline">Voorstel ondertekenen</span>
+          <span className="sm:hidden">Ondertekenen</span>
         </button>
       )}
 
