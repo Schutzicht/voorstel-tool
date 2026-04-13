@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Download, Copy, Check, Loader2, PenLine, CheckCircle2, Maximize2, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Download, Copy, Check, Loader2, PenLine, CheckCircle2, Maximize2, X, ArrowLeft, ArrowRight } from 'lucide-react';
 import type { ProposalData, ProposalSignature } from '../types';
 import { migrateProposalData } from '../types';
 import { getProposal, incrementViewCount, signProposal, supabase } from '../lib/supabase';
@@ -275,7 +275,12 @@ export default function ProposalViewer() {
 
       {/* Fullscreen slide modal */}
       {expandedIndex !== null && slides[expandedIndex] && (
-        <div className="fixed inset-0 z-[60] bg-black/95 backdrop-blur-md flex flex-col no-print" onClick={() => setExpandedIndex(null)}>
+        <div className="fixed inset-0 z-[60] bg-black/95 backdrop-blur-md flex flex-col no-print lightbox" onClick={() => setExpandedIndex(null)}>
+          <style>{`
+            .lightbox .reveal { animation: none !important; opacity: 1 !important; transform: none !important; }
+            .lightbox .animate-marquee { animation-play-state: paused; }
+          `}</style>
+
           {/* Top bar */}
           <div className="flex items-center justify-between px-4 sm:px-6 py-4 text-white shrink-0" onClick={e => e.stopPropagation()}>
             <div className="text-sm font-medium text-white/60">
@@ -284,7 +289,7 @@ export default function ProposalViewer() {
             </div>
             <button
               onClick={() => setExpandedIndex(null)}
-              className="bg-white/10 hover:bg-white/20 p-2.5 rounded-full transition-colors"
+              className="bg-white/10 hover:bg-white/20 p-2.5 rounded-full transition-colors touch-manipulation"
               aria-label="Sluiten"
             >
               <X className="w-5 h-5" />
@@ -301,25 +306,27 @@ export default function ProposalViewer() {
           </div>
 
           {/* Nav bar */}
-          <div className="flex items-center justify-center gap-3 sm:gap-4 px-4 py-4 shrink-0" onClick={e => e.stopPropagation()}>
+          <div className="flex items-center justify-center gap-4 sm:gap-6 px-4 py-4 shrink-0" onClick={e => e.stopPropagation()}>
             <button
               onClick={() => setExpandedIndex(i => (i !== null && i > 0 ? i - 1 : i))}
               disabled={expandedIndex === 0}
-              className="bg-white/10 hover:bg-white/20 text-white p-3 rounded-full transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+              className="group flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 text-white pl-4 pr-5 py-3 rounded-full transition-all disabled:opacity-20 disabled:cursor-not-allowed touch-manipulation"
               aria-label="Vorige slide"
             >
-              <ChevronLeft className="w-5 h-5" />
+              <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" strokeWidth={2} />
+              <span className="text-sm font-display font-bold hidden sm:inline">Vorige</span>
             </button>
-            <div className="text-white/60 text-xs sm:text-sm font-medium min-w-[80px] text-center">
+            <div className="text-white/60 text-xs sm:text-sm font-display font-bold min-w-[60px] text-center">
               {expandedIndex + 1} / {slides.length}
             </div>
             <button
               onClick={() => setExpandedIndex(i => (i !== null && i < slides.length - 1 ? i + 1 : i))}
               disabled={expandedIndex === slides.length - 1}
-              className="bg-white/10 hover:bg-white/20 text-white p-3 rounded-full transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+              className="group flex items-center gap-2 bg-indigo hover:bg-indigo-light text-white pl-5 pr-4 py-3 rounded-full transition-all disabled:opacity-20 disabled:cursor-not-allowed touch-manipulation shadow-lg shadow-indigo/30"
               aria-label="Volgende slide"
             >
-              <ChevronRight className="w-5 h-5" />
+              <span className="text-sm font-display font-bold hidden sm:inline">Volgende</span>
+              <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" strokeWidth={2} />
             </button>
           </div>
         </div>
