@@ -89,6 +89,29 @@ export async function signProposal(id: string, signature: ProposalSignature) {
   return data as SavedProposal;
 }
 
+/**
+ * Clear the signature on a proposal — lets staff re-test the signing
+ * flow without creating a fresh proposal. Destructive: wraps in a
+ * confirm in the UI before calling this.
+ */
+export async function unsignProposal(id: string) {
+  if (!isConfigured()) return null;
+
+  const { data, error } = await supabase
+    .from('proposals')
+    .update({ signature: null, updated_at: new Date().toISOString() })
+    .eq('id', id)
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error unsigning proposal:', error);
+    throw error;
+  }
+
+  return data as SavedProposal;
+}
+
 export async function incrementViewCount(id: string) {
   if (!isConfigured()) return;
 

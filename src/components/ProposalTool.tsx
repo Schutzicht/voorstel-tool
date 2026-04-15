@@ -1,10 +1,10 @@
 import { useState, useCallback, useEffect, useRef, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getProposal, saveProposal } from '../lib/supabase';
+import { getProposal, saveProposal, unsignProposal } from '../lib/supabase';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ChevronRight, ChevronLeft,
-  Check, Download, Eye, EyeOff, Loader2, Link, Settings2
+  Check, Download, Eye, EyeOff, Loader2, Link, Settings2, X
 } from 'lucide-react';
 import clsx from 'clsx';
 import {
@@ -289,8 +289,34 @@ export default function ProposalTool() {
         <div className="w-[1px] h-5 bg-warm-grey shrink-0"></div>
         <span className="text-sm text-text-secondary font-medium truncate">{data.clientName || 'Nieuw voorstel'} — {data.proposalType}</span>
         {signature?.agreed && (
-          <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-green-500/10 text-green-600 text-xs font-bold border border-green-500/20" title={`Ondertekend door ${signature.name} op ${signature.date}`}>
-            <Check className="w-3 h-3" /> Ondertekend
+          <span className="flex items-center gap-1 pl-2.5 pr-1 py-1 rounded-full bg-green-500/10 text-green-600 text-xs font-bold border border-green-500/20">
+            <span className="flex items-center gap-1.5" title={`Ondertekend door ${signature.name} op ${signature.date}`}>
+              <Check className="w-3 h-3" /> Ondertekend
+            </span>
+            <button
+              onClick={async () => {
+                if (!id) return;
+                const ok = confirm(
+                  `⚠️  Handtekening wissen?\n\n` +
+                  `Ondertekend door: ${signature.name}\n` +
+                  `Datum: ${signature.date}\n\n` +
+                  `Dit is bedoeld om het ondertekenproces opnieuw te kunnen testen. ` +
+                  `De echte klant kan daarna opnieuw ondertekenen via de share-link.\n\n` +
+                  `Doorgaan?`,
+                );
+                if (!ok) return;
+                try {
+                  await unsignProposal(id);
+                  setSignature(null);
+                } catch (err) {
+                  alert('Ontteken mislukt — probeer opnieuw.');
+                }
+              }}
+              className="ml-0.5 w-5 h-5 rounded-full hover:bg-green-500/20 flex items-center justify-center transition-colors"
+              title="Handtekening wissen (voor tests)"
+            >
+              <X className="w-3 h-3" />
+            </button>
           </span>
         )}
         <div className="ml-auto flex items-center gap-3 shrink-0">
