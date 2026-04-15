@@ -41,6 +41,10 @@ export default function ProposalTool() {
   const [data, setData] = useState<ProposalData>(getInitialData());
   const [signature, setSignature] = useState<ProposalSignature | null>(null);
   const [activeSection, setActiveSection] = useState<string>('cover');
+  // For sections that emit multiple slides (Doelen 1/2 & 2/2, Investering
+  // A/B/C) — which specific split-slide key is currently being previewed.
+  // Null means "pick the first slide that belongs to the active section".
+  const [activeSlideKey, setActiveSlideKey] = useState<string | null>(null);
   const [showFullPreview, setShowFullPreview] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
@@ -94,7 +98,18 @@ export default function ProposalTool() {
   const currentSection = sections[sectionIndex >= 0 ? sectionIndex : 0];
   const effectiveSectionIndex = sectionIndex >= 0 ? sectionIndex : 0;
 
-  const previewSlide = slides.find(s => s.key === activeSection || s.key.startsWith(activeSection));
+  // All slides that belong to the currently active section (by key prefix).
+  // E.g. section 'doelen' matches keys 'doelen-0', 'doelen-1'; section
+  // 'investeringopties' matches 'investeringopties-0', 'investeringopties-1'.
+  const sectionSlides = slides.filter(
+    (s) => s.key === activeSection || s.key.startsWith(`${activeSection}-`),
+  );
+
+  // previewSlide uses explicit activeSlideKey (when the user clicked a
+  // specific thumbnail), falling back to the first slide of the section.
+  const previewSlide =
+    (activeSlideKey && slides.find((s) => s.key === activeSlideKey)) ||
+    sectionSlides[0];
 
   const upd = useCallback(<K extends keyof ProposalData>(key: K, value: ProposalData[K]) => {
     setData(prev => ({ ...prev, [key]: value }));
@@ -380,7 +395,10 @@ export default function ProposalTool() {
             return (
               <div key={s.id} className={clsx('flex items-center border-l-2 transition-colors', activeSection === s.id ? 'border-indigo bg-indigo/5' : 'border-transparent hover:bg-cream')}>
                 <button
-                  onClick={() => setActiveSection(s.id)}
+                  onClick={() => {
+                    setActiveSection(s.id);
+                    setActiveSlideKey(null); // reset to first slide of this section
+                  }}
                   className={clsx(
                     'flex-1 text-left px-4 py-2.5 text-sm font-medium transition-colors',
                     isHidden && 'opacity-40',
@@ -482,17 +500,23 @@ export default function ProposalTool() {
           <div className="mt-6">
             <p className="text-[10px] uppercase tracking-widest text-text-secondary font-bold mb-3">Alle slides ({slides.length})</p>
             <div className="flex gap-2 overflow-x-auto pb-2">
-              {slides.map(slide => (
+              {slides.map(slide => {
+                // For split slides, key is like 'doelen-1' or
+                // 'investeringopties-0' → the section id is the part
+                // before the last '-<number>'.
+                const slideSectionId = slide.key.replace(/-\d+$/, '');
+                const matchingSection = sections.find((s) => s.id === slideSectionId);
+                const isActiveSlide = previewSlide?.key === slide.key;
+                return (
                 <button
                   key={slide.key}
                   onClick={() => {
-                    const sectionId = slide.key.split('-')[0];
-                    const match = sections.find(s => s.id === sectionId);
-                    if (match) setActiveSection(match.id);
+                    if (matchingSection) setActiveSection(matchingSection.id);
+                    setActiveSlideKey(slide.key);
                   }}
                   className={clsx(
                     'shrink-0 relative',
-                    activeSection === slide.key.split('-')[0] ? 'ring-2 ring-indigo rounded-lg' : 'opacity-80 hover:opacity-100 transition-opacity'
+                    isActiveSlide ? 'ring-2 ring-indigo rounded-lg' : 'opacity-80 hover:opacity-100 transition-opacity'
                   )}
                   style={{ width: '128px' }}
                 >
@@ -510,7 +534,8 @@ export default function ProposalTool() {
                   </div>
                   <p className="text-[9px] font-bold text-text-secondary text-center mt-1 uppercase tracking-wider">{slide.label}</p>
                 </button>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>

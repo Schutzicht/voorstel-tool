@@ -78,7 +78,7 @@ export function generateSlides(data: ProposalData, signature?: ProposalSignature
   if (data.hasInvestmentOptions && data.investmentOptions.length > 0) {
     data.investmentOptions.forEach((_, i) => {
       slides.push({
-        key: `investering-opt-${i}`,
+        key: `investeringopties-${i}`,
         label: `Investering ${String.fromCharCode(65 + i)}`,
         node: <InvestmentOptionsSlide data={data} optionIndex={i} />,
       });
