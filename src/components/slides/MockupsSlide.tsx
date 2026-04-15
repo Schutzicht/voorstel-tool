@@ -1,4 +1,5 @@
 import { type ProposalData } from '../../types';
+import { SlideFooter } from './SlideFooter';
 
 export function MockupsSlide({ data }: { data: ProposalData }) {
   const isWebsite = data.proposalType.toLowerCase().includes('website') || data.proposalType.toLowerCase().includes('software') || data.proposalType.toLowerCase().includes('webshop');
@@ -27,10 +28,6 @@ export function MockupsSlide({ data }: { data: ProposalData }) {
           <AdsMockup name={name} urlSafe={urlSafe} />
         )}
       </div>
-
-      <p className="absolute bottom-6 right-8 text-[10px] uppercase tracking-widest text-dark/20 font-bold font-display reveal">
-        Voorbeeld / Indicatie
-      </p>
     </div>
   );
 }
@@ -175,6 +172,7 @@ function AdsMockup({ name, urlSafe }: { name: string; urlSafe: string }) {
              <span className="font-bold text-dark/70 hover:text-dark cursor-pointer">Stuur in (0)</span>
           </div>
       </div>
+      <SlideFooter />
     </div>
   );
 }

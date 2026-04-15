@@ -1,4 +1,5 @@
 export { MeshBackground } from './MeshBackground';
+export { SlideFooter } from './SlideFooter';
 export { CoverSlide } from './CoverSlide';
 export { AgencySlide } from './AgencySlide';
 export { ClientMarqueeSlide } from './ClientMarqueeSlide';

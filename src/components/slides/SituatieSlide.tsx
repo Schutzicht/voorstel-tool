@@ -1,5 +1,6 @@
 import { type ProposalData } from '../../types';
 import { MeshBackground } from './MeshBackground';
+import { SlideFooter } from './SlideFooter';
 
 export function SituatieSlide({ data }: { data: ProposalData }) {
   const current = data.currentSituation || 'Geen eigen platform aanwezig\nBeperkte online zichtbaarheid\nHandmatige processen';
@@ -46,6 +47,7 @@ export function SituatieSlide({ data }: { data: ProposalData }) {
           </ul>
         </div>
       </div>
+      <SlideFooter />
     </div>
   );
 }

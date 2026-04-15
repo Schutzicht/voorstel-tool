@@ -1,5 +1,6 @@
 import { type ProposalData, type InvestmentOption } from '../../types';
 import { MeshBackground } from './MeshBackground';
+import { SlideFooter } from './SlideFooter';
 
 function calcSum(items: { agenseaPrice: string }[]): string | null {
   const total = items.reduce((sum, item) => {
@@ -124,6 +125,7 @@ export function InvestmentOptionsSlide({ data, optionIndex }: Props) {
           <div className="hidden md:block"></div>
         )}
       </div>
+      <SlideFooter />
     </div>
   );
 }

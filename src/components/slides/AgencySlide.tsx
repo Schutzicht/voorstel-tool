@@ -1,5 +1,6 @@
 import { type ProposalData } from '../../types';
 import { MeshBackground } from './MeshBackground';
+import { SlideFooter } from './SlideFooter';
 
 export function AgencySlide({ data: _data }: { data: ProposalData }) {
   return (
@@ -56,6 +57,7 @@ export function AgencySlide({ data: _data }: { data: ProposalData }) {
           Agensea · full-service digital agency
         </p>
       </div>
+      <SlideFooter />
     </div>
   );
 }

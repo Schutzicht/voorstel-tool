@@ -1,4 +1,5 @@
 import { type ProposalData } from '../../types';
+import { SlideFooter } from './SlideFooter';
 
 interface PlatformConfig {
   name: string;
@@ -55,6 +56,7 @@ export function AdPlatformsSlide({ data }: { data: ProposalData }) {
           </div>
         ))}
       </div>
+      <SlideFooter />
     </div>
   );
 }

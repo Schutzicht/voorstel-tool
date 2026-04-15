@@ -1,5 +1,6 @@
 import { type ProposalData } from '../../types';
 import { MeshBackground } from './MeshBackground';
+import { SlideFooter } from './SlideFooter';
 
 export function AboutTeamSlide({ data: _data }: { data: ProposalData }) {
   const team = [
@@ -37,6 +38,7 @@ export function AboutTeamSlide({ data: _data }: { data: ProposalData }) {
           </div>
         ))}
       </div>
+      <SlideFooter />
     </div>
   );
 }

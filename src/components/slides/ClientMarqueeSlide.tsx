@@ -1,6 +1,7 @@
-import { type ProposalData } from '../../types';
+import type { ProposalData } from '../../types';
+import { SlideFooter } from './SlideFooter';
 
-export function ClientMarqueeSlide({ data }: { data: ProposalData }) {
+export function ClientMarqueeSlide(_: { data: ProposalData }) {
   const logos = [
     { src: "/logos-hero/Logo_Adrz_RGB.png", alt: "ADRZ" },
     { src: "/logos-hero/Bouwgroep R&D.svg", alt: "Bouwgroep R&D" },
@@ -40,10 +41,7 @@ export function ClientMarqueeSlide({ data }: { data: ProposalData }) {
           ))}
         </div>
       </div>
-
-      <p className="absolute bottom-6 right-8 text-[10px] uppercase tracking-widest text-dark/20 font-bold font-display">
-        {data.clientName || 'Klant'} · agensea klanten
-      </p>
+      <SlideFooter />
     </div>
   );
 }

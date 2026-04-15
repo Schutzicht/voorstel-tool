@@ -1,5 +1,6 @@
 import { type ProposalData, type ProposalSignature } from '../../types';
 import { MeshBackground } from './MeshBackground';
+import { SlideFooter } from './SlideFooter';
 
 export function CTASlide({ data, signature }: { data: ProposalData; signature?: ProposalSignature | null }) {
   return (
@@ -60,6 +61,7 @@ export function CTASlide({ data, signature }: { data: ProposalData; signature?: 
            <img src={data.clientLogo} alt="Client logo" style={{ height: `${data.logoScale ?? 48}px` }} className="object-contain opacity-40 grayscale" />
         )}
       </div>
+      <SlideFooter />
     </div>
   );
 }

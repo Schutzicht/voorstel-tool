@@ -1,5 +1,6 @@
 import { type ProposalData } from '../../types';
 import { MeshBackground } from './MeshBackground';
+import { SlideFooter } from './SlideFooter';
 
 export function MaandelijksSlide({ data }: { data: ProposalData }) {
   return (
@@ -35,6 +36,7 @@ export function MaandelijksSlide({ data }: { data: ProposalData }) {
           </tbody>
         </table>
       </div>
+      <SlideFooter />
     </div>
   );
 }

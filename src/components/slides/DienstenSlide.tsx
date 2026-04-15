@@ -1,5 +1,6 @@
 import { type ProposalData, SERVICE_DESCRIPTIONS } from '../../types';
 import { MeshBackground } from './MeshBackground';
+import { SlideFooter } from './SlideFooter';
 
 export function DienstenSlide({ data }: { data: ProposalData }) {
   const services = data.services;
@@ -32,6 +33,7 @@ export function DienstenSlide({ data }: { data: ProposalData }) {
           <p className="text-text-secondary text-lg self-center mx-auto opacity-70 col-span-full">Geen diensten geselecteerd.</p>
         )}
       </div>
+      <SlideFooter />
     </div>
   );
 }

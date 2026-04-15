@@ -1,4 +1,5 @@
 import { type ProposalData } from '../../types';
+import { SlideFooter } from './SlideFooter';
 
 const MAX_GOALS_PER_SLIDE = 3;
 
@@ -47,6 +48,7 @@ export function DoelSlide({ data, page = 0 }: { data: ProposalData; page?: numbe
           </div>
         ))}
       </div>
+      <SlideFooter />
     </div>
   );
 }
