@@ -8,9 +8,13 @@ export function CoverSlide({ data }: { data: ProposalData }) {
 
       {/* Top: Agensea wordmark */}
       <div className="flex justify-between items-start relative z-10">
-        <div className="font-display text-3xl font-bold tracking-tight text-dark">
-          agensea<span className="text-indigo">.</span>
-        </div>
+        <img
+          src="/brand/Agensea%20logo.svg"
+          alt="Agensea"
+          width="400"
+          height="400"
+          className="h-10 w-auto"
+        />
         {data.clientLogo && (
           <div className="backdrop-blur-xl p-4 rounded-2xl border border-white/50 shadow-sm transition-all">
             <img src={data.clientLogo} alt="Client logo" style={{ height: `${data.logoScale ?? 48}px` }} className="object-contain" />
