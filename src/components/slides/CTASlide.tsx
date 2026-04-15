@@ -7,9 +7,13 @@ export function CTASlide({ data, signature }: { data: ProposalData; signature?: 
       <MeshBackground />
 
       <div className="flex justify-between items-start relative z-10 reveal">
-        <div className="font-display text-3xl font-bold tracking-tight text-dark">
-          agensea<span className="text-indigo">.</span>
-        </div>
+        <img
+          src="/brand/Agensea%20logo.svg"
+          alt="Agensea"
+          width="400"
+          height="400"
+          className="h-10 w-auto"
+        />
       </div>
 
       <div className="flex-1 flex flex-col justify-center relative z-10">

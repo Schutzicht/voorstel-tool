@@ -282,9 +282,15 @@ export default function ProposalTool() {
           <ChevronLeft className="w-4 h-4" /> Dashboard
         </button>
         <div className="w-[1px] h-5 bg-warm-grey shrink-0 mr-3"></div>
-        <div className="font-display font-bold text-lg tracking-tight text-dark flex items-center gap-2 shrink-0">
-          <div className="w-7 h-7 bg-indigo text-white rounded-md flex items-center justify-center text-xs font-bold">Ag</div>
-          Proposal Tool
+        <div className="flex items-center gap-3 shrink-0">
+          <img
+            src="/brand/Agensea%20logo.svg"
+            alt="Agensea"
+            width="400"
+            height="400"
+            className="h-6 w-auto"
+          />
+          <span className="font-display font-bold text-sm tracking-tight text-text-secondary uppercase tracking-[0.15em]">Proposal Tool</span>
         </div>
         <div className="w-[1px] h-5 bg-warm-grey shrink-0"></div>
         <span className="text-sm text-text-secondary font-medium truncate">{data.clientName || 'Nieuw voorstel'} — {data.proposalType}</span>

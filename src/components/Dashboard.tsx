@@ -59,9 +59,15 @@ export default function Dashboard() {
       <div className="max-w-6xl mx-auto">
         <header className="flex justify-between items-center mb-12">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-indigo text-white rounded-xl flex items-center justify-center text-xl font-display font-bold">Ag</div>
-            <div>
-              <h1 className="text-2xl font-display font-bold text-dark">Agensea Proposals</h1>
+            <img
+              src="/brand/Agensea%20logo.svg"
+              alt="Agensea"
+              width="400"
+              height="400"
+              className="h-10 w-auto"
+            />
+            <div className="pl-4 border-l border-warm-grey">
+              <h1 className="text-2xl font-display font-bold text-dark">Proposals</h1>
               <p className="text-sm text-text-secondary font-medium">Beheer alle voorstellen & klantpresentaties</p>
             </div>
           </div>
