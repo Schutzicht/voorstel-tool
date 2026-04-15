@@ -10,38 +10,50 @@ function calcSum(items: { agenseaPrice: string }[]): string | null {
   return `€ ${total.toLocaleString('nl-NL', { minimumFractionDigits: 0, maximumFractionDigits: 0 })},-`;
 }
 
-function OptionCard({ option, index }: { option: InvestmentOption; index: number }) {
+function OptionCard({ option, index, total }: { option: InvestmentOption; index: number; total: number }) {
   const oneTimeTotal = calcSum(option.oneTimeItems);
   const monthlyTotal = calcSum(option.monthlyItems);
+  // When there's only one option: take the full width; otherwise 2–3 columns share
+  const widthBasis = total === 1 ? 'max-w-xl mx-auto w-full' : 'flex-1';
 
   return (
-    <div className="flex-1 min-h-0 flex flex-col bg-white/60 backdrop-blur-xl rounded-2xl border border-white shadow-xl overflow-hidden reveal" style={{ animationDelay: `${0.2 + index * 0.1}s` }}>
-      <div className="bg-indigo text-white px-5 py-3 shrink-0">
-        <div className="flex items-center gap-2.5">
-          <span className="w-8 h-8 rounded-lg bg-white/20 font-display font-bold text-sm flex items-center justify-center shrink-0">
+    <div
+      className={`${widthBasis} min-h-0 flex flex-col bg-white/70 backdrop-blur-xl rounded-[1.75rem] border border-white/80 shadow-[0_24px_48px_-24px_rgba(13,13,13,0.18)] overflow-hidden reveal`}
+      style={{ animationDelay: `${0.2 + index * 0.12}s` }}
+    >
+      {/* Header */}
+      <div className="bg-indigo text-white px-8 py-6 shrink-0 relative overflow-hidden">
+        <div className="absolute -top-8 -right-8 w-32 h-32 rounded-full bg-white/10 blur-2xl"></div>
+        <div className="relative flex items-center gap-4">
+          <span className="w-11 h-11 rounded-xl bg-white/20 font-display font-bold text-xl flex items-center justify-center shrink-0">
             {String.fromCharCode(65 + index)}
           </span>
-          <div className="min-w-0">
-            <h3 className="font-display font-bold text-lg tracking-tight leading-tight truncate">{option.name}</h3>
-            {option.subtitle && <p className="text-white/70 text-[11px] font-medium truncate">{option.subtitle}</p>}
+          <div className="min-w-0 flex-1">
+            <h3 className="font-display font-bold text-2xl tracking-tight leading-tight truncate">{option.name}</h3>
+            {option.subtitle && (
+              <p className="text-white/75 text-sm font-medium mt-0.5 truncate">{option.subtitle}</p>
+            )}
           </div>
         </div>
       </div>
 
-      <div className="flex-1 min-h-0 p-5 flex flex-col overflow-hidden">
+      {/* Body */}
+      <div className="flex-1 min-h-0 p-8 flex flex-col overflow-hidden">
         {option.description && (
-          <p className="text-text-secondary text-[11px] leading-snug mb-3 pb-3 border-b border-warm-grey line-clamp-3">{option.description}</p>
+          <p className="text-text-secondary text-sm leading-relaxed mb-5 pb-5 border-b border-warm-grey line-clamp-4">
+            {option.description}
+          </p>
         )}
 
-        <div className="flex-1 min-h-0 overflow-hidden space-y-3">
+        <div className="flex-1 min-h-0 overflow-hidden space-y-5">
           {option.oneTimeItems.length > 0 && (
             <div>
-              <p className="text-[9px] uppercase tracking-widest text-indigo font-bold mb-1.5">Eenmalig</p>
-              <ul className="space-y-1">
-                {option.oneTimeItems.map(item => (
-                  <li key={item.id} className="flex justify-between items-baseline gap-2 text-[11px]">
-                    <span className="text-dark/80 truncate">{item.description}</span>
-                    <span className="font-display font-bold text-dark shrink-0">{item.agenseaPrice}</span>
+              <p className="text-[10px] uppercase tracking-[0.2em] text-indigo font-bold mb-3">Eenmalig</p>
+              <ul className="space-y-2.5">
+                {option.oneTimeItems.map((item) => (
+                  <li key={item.id} className="flex justify-between items-baseline gap-4 text-[13px] leading-snug">
+                    <span className="text-dark/85 min-w-0 break-words">{item.description}</span>
+                    <span className="font-display font-bold text-dark shrink-0 whitespace-nowrap">{item.agenseaPrice}</span>
                   </li>
                 ))}
               </ul>
@@ -50,12 +62,12 @@ function OptionCard({ option, index }: { option: InvestmentOption; index: number
 
           {option.monthlyItems.length > 0 && (
             <div>
-              <p className="text-[9px] uppercase tracking-widest text-indigo font-bold mb-1.5">Maandelijks</p>
-              <ul className="space-y-1">
-                {option.monthlyItems.map(item => (
-                  <li key={item.id} className="flex justify-between items-baseline gap-2 text-[11px]">
-                    <span className="text-dark/80 truncate">{item.description}</span>
-                    <span className="font-display font-bold text-dark shrink-0">{item.agenseaPrice}</span>
+              <p className="text-[10px] uppercase tracking-[0.2em] text-indigo font-bold mb-3">Maandelijks</p>
+              <ul className="space-y-2.5">
+                {option.monthlyItems.map((item) => (
+                  <li key={item.id} className="flex justify-between items-baseline gap-4 text-[13px] leading-snug">
+                    <span className="text-dark/85 min-w-0 break-words">{item.description}</span>
+                    <span className="font-display font-bold text-dark shrink-0 whitespace-nowrap">{item.agenseaPrice}</span>
                   </li>
                 ))}
               </ul>
@@ -63,17 +75,18 @@ function OptionCard({ option, index }: { option: InvestmentOption; index: number
           )}
         </div>
 
-        <div className="mt-3 pt-3 border-t border-warm-grey space-y-0.5 shrink-0">
+        {/* Totals */}
+        <div className="mt-6 pt-5 border-t-2 border-indigo/15 space-y-2 shrink-0">
           {oneTimeTotal && (
             <div className="flex justify-between items-baseline">
-              <span className="text-[9px] uppercase tracking-widest text-text-secondary font-bold">Eenmalig totaal</span>
-              <span className="font-display font-bold text-indigo text-base">{oneTimeTotal}</span>
+              <span className="text-[10px] uppercase tracking-[0.2em] text-text-secondary font-bold">Eenmalig totaal</span>
+              <span className="font-display font-bold text-indigo text-2xl leading-none">{oneTimeTotal}</span>
             </div>
           )}
           {monthlyTotal && (
             <div className="flex justify-between items-baseline">
-              <span className="text-[9px] uppercase tracking-widest text-text-secondary font-bold">Per maand</span>
-              <span className="font-display font-bold text-indigo text-base">{monthlyTotal}</span>
+              <span className="text-[10px] uppercase tracking-[0.2em] text-text-secondary font-bold">Per maand</span>
+              <span className="font-display font-bold text-indigo text-2xl leading-none">{monthlyTotal}</span>
             </div>
           )}
         </div>
@@ -84,22 +97,30 @@ function OptionCard({ option, index }: { option: InvestmentOption; index: number
 
 export function InvestmentOptionsSlide({ data }: { data: ProposalData }) {
   const options = data.investmentOptions;
+  const count = options.length;
 
   return (
-    <div className="pdf-slide bg-[#FAF9F6] relative flex flex-col p-12 overflow-hidden">
+    <div className="pdf-slide bg-[#FAF9F6] relative flex flex-col p-14 overflow-hidden">
       <MeshBackground />
-      <div className="mb-6 relative z-10 reveal shrink-0">
-        <p className="text-xs uppercase tracking-[0.3em] text-indigo font-bold mb-3">Financieel</p>
-        <h2 className="text-5xl font-display font-bold text-dark tracking-tight leading-none">Kies je pakket.</h2>
-        <p className="text-text-secondary text-base leading-relaxed mt-3 max-w-xl">Vergelijk de pakketten en kies wat het beste past. Bij ondertekenen geef je aan welke optie je kiest.</p>
+
+      <div className="mb-10 relative z-10 reveal shrink-0">
+        <p className="text-xs uppercase tracking-[0.3em] text-indigo font-bold mb-4">Financieel</p>
+        <h2 className="text-6xl font-display font-bold text-dark tracking-tight leading-[0.95]">Kies je pakket.</h2>
+        <p className="text-text-secondary text-lg leading-relaxed mt-5 max-w-2xl">
+          Vergelijk de pakketten en kies wat het beste past. Bij ondertekenen geef je
+          aan welke optie je kiest.
+        </p>
       </div>
 
-      <div className="flex-1 min-h-0 flex gap-4 relative z-10">
-        {options.map((opt, i) => (
-          <OptionCard key={opt.id} option={opt} index={i} />
-        ))}
-        {options.length === 0 && (
-          <p className="text-text-secondary text-lg self-center mx-auto opacity-70">Nog geen opties toegevoegd.</p>
+      <div className="flex-1 min-h-0 flex gap-10 relative z-10">
+        {count === 0 ? (
+          <p className="text-text-secondary text-lg self-center mx-auto opacity-70">
+            Nog geen opties toegevoegd.
+          </p>
+        ) : (
+          options.map((opt, i) => (
+            <OptionCard key={opt.id} option={opt} index={i} total={count} />
+          ))
         )}
       </div>
     </div>
