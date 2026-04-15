@@ -53,9 +53,6 @@ export function AgencySlide({ data: _data }: { data: ProposalData }) {
             <img src="/logos-hero/Kaap_RGB_Logo_rond_fc.svg" alt="De Kaap" className="h-6 grayscale hover:grayscale-0 transition-all" />
           </div>
         </div>
-        <p className="text-[10px] uppercase tracking-[0.2em] text-text-secondary font-bold opacity-60 reveal" style={{ animationDelay: '0.7s' }}>
-          Agensea · full-service digital agency
-        </p>
       </div>
       <SlideFooter />
     </div>
