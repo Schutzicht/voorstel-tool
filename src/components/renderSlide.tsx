@@ -73,9 +73,16 @@ export function generateSlides(data: ProposalData, signature?: ProposalSignature
     { key: 'content', label: 'Content', node: <ContentSlide data={data} /> },
   );
 
-  // Investering slides — opties-modus vervangt de losse slides
+  // Investering slides — opties-modus vervangt de losse slides.
+  // Elke optie krijgt z'n eigen slide zodat A/B ruim ademen.
   if (data.hasInvestmentOptions && data.investmentOptions.length > 0) {
-    slides.push({ key: 'investeringopties', label: 'Investering (opties)', node: <InvestmentOptionsSlide data={data} /> });
+    data.investmentOptions.forEach((_, i) => {
+      slides.push({
+        key: `investering-opt-${i}`,
+        label: `Investering ${String.fromCharCode(65 + i)}`,
+        node: <InvestmentOptionsSlide data={data} optionIndex={i} />,
+      });
+    });
   } else {
     if (data.oneTimeItems.length > 0 || !data.onboardingCompleted) {
       slides.push({ key: 'eenmalig', label: 'Investering (1x)', node: <EenmaligeInvesteringSlide data={data} /> });

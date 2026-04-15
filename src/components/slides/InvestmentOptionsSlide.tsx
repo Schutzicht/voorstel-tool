@@ -10,117 +10,118 @@ function calcSum(items: { agenseaPrice: string }[]): string | null {
   return `€ ${total.toLocaleString('nl-NL', { minimumFractionDigits: 0, maximumFractionDigits: 0 })},-`;
 }
 
-function OptionCard({ option, index, total }: { option: InvestmentOption; index: number; total: number }) {
-  const oneTimeTotal = calcSum(option.oneTimeItems);
-  const monthlyTotal = calcSum(option.monthlyItems);
-  // When there's only one option: take the full width; otherwise 2–3 columns share
-  const widthBasis = total === 1 ? 'max-w-xl mx-auto w-full' : 'flex-1';
-
-  return (
-    <div
-      className={`${widthBasis} min-h-0 flex flex-col bg-white/70 backdrop-blur-xl rounded-[1.75rem] border border-white/80 shadow-[0_24px_48px_-24px_rgba(13,13,13,0.18)] overflow-hidden reveal`}
-      style={{ animationDelay: `${0.2 + index * 0.12}s` }}
-    >
-      {/* Header */}
-      <div className="bg-indigo text-white px-8 py-6 shrink-0 relative overflow-hidden">
-        <div className="absolute -top-8 -right-8 w-32 h-32 rounded-full bg-white/10 blur-2xl"></div>
-        <div className="relative flex items-center gap-4">
-          <span className="w-11 h-11 rounded-xl bg-white/20 font-display font-bold text-xl flex items-center justify-center shrink-0">
-            {String.fromCharCode(65 + index)}
-          </span>
-          <div className="min-w-0 flex-1">
-            <h3 className="font-display font-bold text-2xl tracking-tight leading-tight truncate">{option.name}</h3>
-            {option.subtitle && (
-              <p className="text-white/75 text-sm font-medium mt-0.5 truncate">{option.subtitle}</p>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Body */}
-      <div className="flex-1 min-h-0 p-8 flex flex-col overflow-hidden">
-        {option.description && (
-          <p className="text-text-secondary text-sm leading-relaxed mb-5 pb-5 border-b border-warm-grey line-clamp-4">
-            {option.description}
-          </p>
-        )}
-
-        <div className="flex-1 min-h-0 overflow-hidden space-y-5">
-          {option.oneTimeItems.length > 0 && (
-            <div>
-              <p className="text-[10px] uppercase tracking-[0.2em] text-indigo font-bold mb-3">Eenmalig</p>
-              <ul className="space-y-2.5">
-                {option.oneTimeItems.map((item) => (
-                  <li key={item.id} className="flex justify-between items-baseline gap-4 text-[13px] leading-snug">
-                    <span className="text-dark/85 min-w-0 break-words">{item.description}</span>
-                    <span className="font-display font-bold text-dark shrink-0 whitespace-nowrap">{item.agenseaPrice}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {option.monthlyItems.length > 0 && (
-            <div>
-              <p className="text-[10px] uppercase tracking-[0.2em] text-indigo font-bold mb-3">Maandelijks</p>
-              <ul className="space-y-2.5">
-                {option.monthlyItems.map((item) => (
-                  <li key={item.id} className="flex justify-between items-baseline gap-4 text-[13px] leading-snug">
-                    <span className="text-dark/85 min-w-0 break-words">{item.description}</span>
-                    <span className="font-display font-bold text-dark shrink-0 whitespace-nowrap">{item.agenseaPrice}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
-
-        {/* Totals */}
-        <div className="mt-6 pt-5 border-t-2 border-indigo/15 space-y-2 shrink-0">
-          {oneTimeTotal && (
-            <div className="flex justify-between items-baseline">
-              <span className="text-[10px] uppercase tracking-[0.2em] text-text-secondary font-bold">Eenmalig totaal</span>
-              <span className="font-display font-bold text-indigo text-2xl leading-none">{oneTimeTotal}</span>
-            </div>
-          )}
-          {monthlyTotal && (
-            <div className="flex justify-between items-baseline">
-              <span className="text-[10px] uppercase tracking-[0.2em] text-text-secondary font-bold">Per maand</span>
-              <span className="font-display font-bold text-indigo text-2xl leading-none">{monthlyTotal}</span>
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
+interface Props {
+  data: ProposalData;
+  /** Render only a specific option as a full-width slide (A, B, …) */
+  optionIndex: number;
 }
 
-export function InvestmentOptionsSlide({ data }: { data: ProposalData }) {
+export function InvestmentOptionsSlide({ data, optionIndex }: Props) {
   const options = data.investmentOptions;
-  const count = options.length;
+  const option: InvestmentOption | undefined = options[optionIndex];
+  const total = options.length;
+
+  if (!option) {
+    return (
+      <div className="pdf-slide bg-[#FAF9F6] relative flex items-center justify-center p-14 overflow-hidden">
+        <MeshBackground />
+        <p className="text-text-secondary text-lg opacity-70 relative z-10">Nog geen pakket toegevoegd.</p>
+      </div>
+    );
+  }
+
+  const letter = String.fromCharCode(65 + optionIndex);
+  const oneTimeTotal = calcSum(option.oneTimeItems);
+  const monthlyTotal = calcSum(option.monthlyItems);
 
   return (
     <div className="pdf-slide bg-[#FAF9F6] relative flex flex-col p-14 overflow-hidden">
       <MeshBackground />
 
-      <div className="mb-10 relative z-10 reveal shrink-0">
-        <p className="text-xs uppercase tracking-[0.3em] text-indigo font-bold mb-4">Financieel</p>
-        <h2 className="text-6xl font-display font-bold text-dark tracking-tight leading-[0.95]">Kies je pakket.</h2>
-        <p className="text-text-secondary text-lg leading-relaxed mt-5 max-w-2xl">
-          Vergelijk de pakketten en kies wat het beste past. Bij ondertekenen geef je
-          aan welke optie je kiest.
-        </p>
-      </div>
+      {/* Hero — side-by-side eyebrow + package meta */}
+      <header className="relative z-10 reveal shrink-0 mb-10">
+        <div className="flex items-end justify-between gap-10 flex-wrap">
+          <div className="min-w-0">
+            <p className="text-xs uppercase tracking-[0.3em] text-indigo font-bold mb-3">
+              Financieel · Pakket {letter} van {total}
+            </p>
+            <h2 className="text-6xl font-display font-bold text-dark tracking-tight leading-[0.95]">
+              {option.name}
+            </h2>
+            {option.subtitle && (
+              <p className="text-xl text-text-secondary mt-4 font-medium">{option.subtitle}</p>
+            )}
+          </div>
+          <div className="flex items-center gap-4 shrink-0">
+            <div className="w-20 h-20 rounded-2xl bg-indigo text-white font-display font-bold text-5xl flex items-center justify-center">
+              {letter}
+            </div>
+          </div>
+        </div>
 
-      <div className="flex-1 min-h-0 flex gap-10 relative z-10">
-        {count === 0 ? (
-          <p className="text-text-secondary text-lg self-center mx-auto opacity-70">
-            Nog geen opties toegevoegd.
+        {option.description && (
+          <p className="text-text-secondary text-lg leading-relaxed mt-8 max-w-3xl">
+            {option.description}
           </p>
-        ) : (
-          options.map((opt, i) => (
-            <OptionCard key={opt.id} option={opt} index={i} total={count} />
-          ))
+        )}
+      </header>
+
+      {/* Body — eenmalig | maandelijks in twee kolommen + totaal-footer */}
+      <div className="flex-1 min-h-0 relative z-10 grid grid-cols-1 md:grid-cols-2 gap-8 reveal" style={{ animationDelay: '0.2s' }}>
+        {option.oneTimeItems.length > 0 && (
+          <section className="bg-white/70 backdrop-blur-xl border-2 border-white/90 rounded-3xl p-8 shadow-[0_24px_60px_-20px_rgba(13,13,13,0.15)] flex flex-col min-h-0">
+            <div className="flex items-baseline justify-between mb-6 shrink-0">
+              <p className="text-[11px] uppercase tracking-[0.25em] text-indigo font-bold">Eenmalig</p>
+              {oneTimeTotal && (
+                <span className="font-display font-bold text-indigo text-2xl">{oneTimeTotal}</span>
+              )}
+            </div>
+            <ul className="space-y-3 flex-1 min-h-0 overflow-hidden">
+              {option.oneTimeItems.map((item) => (
+                <li
+                  key={item.id}
+                  className="flex justify-between items-baseline gap-4 text-[15px] leading-snug pb-2 border-b border-warm-grey/60 last:border-b-0 last:pb-0"
+                >
+                  <span className="text-dark/85 min-w-0 break-words">{item.description}</span>
+                  <span className="font-display font-bold text-dark shrink-0 whitespace-nowrap">
+                    {item.agenseaPrice}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        {option.monthlyItems.length > 0 && (
+          <section className="bg-white/70 backdrop-blur-xl border-2 border-white/90 rounded-3xl p-8 shadow-[0_24px_60px_-20px_rgba(13,13,13,0.15)] flex flex-col min-h-0">
+            <div className="flex items-baseline justify-between mb-6 shrink-0">
+              <p className="text-[11px] uppercase tracking-[0.25em] text-indigo font-bold">Maandelijks</p>
+              {monthlyTotal && (
+                <span className="font-display font-bold text-indigo text-2xl">{monthlyTotal}</span>
+              )}
+            </div>
+            <ul className="space-y-3 flex-1 min-h-0 overflow-hidden">
+              {option.monthlyItems.map((item) => (
+                <li
+                  key={item.id}
+                  className="flex justify-between items-baseline gap-4 text-[15px] leading-snug pb-2 border-b border-warm-grey/60 last:border-b-0 last:pb-0"
+                >
+                  <span className="text-dark/85 min-w-0 break-words">{item.description}</span>
+                  <span className="font-display font-bold text-dark shrink-0 whitespace-nowrap">
+                    {item.agenseaPrice}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        {/* If only one of the two is filled, render an empty spacer so the grid stays balanced */}
+        {option.oneTimeItems.length === 0 && option.monthlyItems.length > 0 && (
+          <div className="hidden md:block"></div>
+        )}
+        {option.monthlyItems.length === 0 && option.oneTimeItems.length > 0 && (
+          <div className="hidden md:block"></div>
         )}
       </div>
     </div>
