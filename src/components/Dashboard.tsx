@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, Settings, Eye, FileEdit, Trash2, Copy, Check, CopyPlus, PenLine } from 'lucide-react';
 import type { SavedProposal } from '../types';
-import { listProposals, saveProposal, supabase } from '../lib/supabase';
+import { listProposals, saveProposal, supabase, getPrettyUrl } from '../lib/supabase';
 
 export default function Dashboard() {
   const [proposals, setProposals] = useState<SavedProposal[]>([]);
@@ -31,8 +31,12 @@ export default function Dashboard() {
     navigate(`/agensea-admin/edit/${newId}`);
   };
 
-  const handleCopyLink = (id: string) => {
-    const url = `${window.location.origin}/v/${id}`;
+  const handleCopyLink = async (id: string) => {
+    // Try pretty URL first, fall back to /v/uuid
+    const pretty = await getPrettyUrl(id).catch(() => null);
+    const url = pretty
+      ? `${window.location.origin}/${pretty.clientSlug}/voorstel/${pretty.proposalSlug}`
+      : `${window.location.origin}/v/${id}`;
     navigator.clipboard.writeText(url);
     setCopiedId(id);
     setTimeout(() => setCopiedId(null), 2000);

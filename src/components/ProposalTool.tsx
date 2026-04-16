@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getProposal, saveProposal, unsignProposal } from '../lib/supabase';
+import { getProposal, saveProposal, unsignProposal, getPrettyUrl } from '../lib/supabase';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ChevronRight, ChevronLeft,
@@ -344,8 +344,11 @@ export default function ProposalTool() {
         )}
         <div className="ml-auto flex items-center gap-3 shrink-0">
           <button
-            onClick={() => {
-              const url = `${window.location.origin}/v/${id}`;
+            onClick={async () => {
+              const pretty = await getPrettyUrl(id!).catch(() => null);
+              const url = pretty
+                ? `${window.location.origin}/${pretty.clientSlug}/voorstel/${pretty.proposalSlug}`
+                : `${window.location.origin}/v/${id}`;
               navigator.clipboard.writeText(url);
               setCopiedLink(true);
               setTimeout(() => setCopiedLink(false), 2000);
