@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useRef, useMemo } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getProposal, saveProposal, unsignProposal } from '../lib/supabase';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -53,8 +53,10 @@ export default function ProposalTool() {
   const [isLoading, setIsLoading] = useState(true);
   const [showWizard, setShowWizard] = useState(false);
 
-  const slides = useMemo(() => generateSlides(data, signature), [data, signature]);
-  const sections = useMemo(() => getSectionsForData(data), [data]);
+  // No useMemo — always fresh so the live preview reflects every keystroke.
+  // generateSlides just creates React element descriptors (cheap, no DOM).
+  const slides = generateSlides(data, signature);
+  const sections = getSectionsForData(data);
 
   // Fetch existing proposal
   useEffect(() => {
