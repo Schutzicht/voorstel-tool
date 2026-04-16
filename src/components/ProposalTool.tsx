@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getProposal, saveProposal, unsignProposal, getPrettyUrl } from '../lib/supabase';
+import { getProposal, saveProposal, unsignProposal, getPrettyUrl, updateProposalSlug } from '../lib/supabase';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ChevronRight, ChevronLeft,
@@ -52,6 +52,9 @@ export default function ProposalTool() {
   const [isExporting, setIsExporting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [showWizard, setShowWizard] = useState(false);
+  const [prettyUrl, setPrettyUrl] = useState<{ clientSlug: string; proposalSlug: string } | null>(null);
+  const [editingSlug, setEditingSlug] = useState(false);
+  const [slugDraft, setSlugDraft] = useState('');
 
   // No useMemo — always fresh so the live preview reflects every keystroke.
   // generateSlides just creates React element descriptors (cheap, no DOM).
@@ -80,6 +83,11 @@ export default function ProposalTool() {
     lastType.current = data.proposalType;
   }
 
+  // Fetch pretty URL on mount
+  useEffect(() => {
+    if (id) getPrettyUrl(id).then(setPrettyUrl).catch(() => {});
+  }, [id]);
+
   // Auto-save debounced (only after onboarding)
   useEffect(() => {
     if (!id || !data.onboardingCompleted) return;
@@ -88,6 +96,8 @@ export default function ProposalTool() {
       saveProposal(id, data).then(() => {
         setIsSaving(false);
         setLastSaved(new Date());
+        // Refresh pretty URL (slug may have been auto-generated on first save)
+        getPrettyUrl(id).then(setPrettyUrl).catch(() => {});
       }).catch(err => {
         console.error('Failed to save', err);
         setIsSaving(false);
@@ -343,21 +353,63 @@ export default function ProposalTool() {
           </span>
         )}
         <div className="ml-auto flex items-center gap-3 shrink-0">
-          <button
-            onClick={async () => {
-              const pretty = await getPrettyUrl(id!).catch(() => null);
-              const url = pretty
-                ? `${window.location.origin}/${pretty.clientSlug}/voorstel/${pretty.proposalSlug}`
-                : `${window.location.origin}/v/${id}`;
-              navigator.clipboard.writeText(url);
-              setCopiedLink(true);
-              setTimeout(() => setCopiedLink(false), 2000);
-            }}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium text-text-secondary hover:text-indigo hover:bg-indigo/5 transition-colors"
-            title="Kopieer klant-link"
-          >
-            {copiedLink ? <><Check className="w-3.5 h-3.5 text-green-500" /> Gekopieerd</> : <><Link className="w-3.5 h-3.5" /> Deel link</>}
-          </button>
+          <div className="flex items-center gap-1.5">
+            <button
+              onClick={async () => {
+                const pretty = prettyUrl ?? await getPrettyUrl(id!).catch(() => null);
+                const url = pretty
+                  ? `${window.location.origin}/${pretty.clientSlug}/voorstel/${pretty.proposalSlug}`
+                  : `${window.location.origin}/v/${id}`;
+                navigator.clipboard.writeText(url);
+                setCopiedLink(true);
+                setTimeout(() => setCopiedLink(false), 2000);
+              }}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium text-text-secondary hover:text-indigo hover:bg-indigo/5 transition-colors"
+              title="Kopieer klant-link"
+            >
+              {copiedLink ? <><Check className="w-3.5 h-3.5 text-green-500" /> Gekopieerd</> : <><Link className="w-3.5 h-3.5" /> Deel link</>}
+            </button>
+            {prettyUrl && !editingSlug && (
+              <button
+                onClick={() => { setSlugDraft(prettyUrl.proposalSlug); setEditingSlug(true); }}
+                className="text-[10px] font-mono text-text-secondary/60 hover:text-indigo transition-colors truncate max-w-[180px]"
+                title="Klik om de URL-slug aan te passen"
+              >
+                /{prettyUrl.proposalSlug}
+              </button>
+            )}
+            {editingSlug && (
+              <form
+                className="flex items-center gap-1"
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  if (!id || !slugDraft.trim()) return;
+                  const result = await updateProposalSlug(id, slugDraft.trim());
+                  if (result) {
+                    setPrettyUrl(prev => prev ? { ...prev, proposalSlug: result } : null);
+                    setEditingSlug(false);
+                  } else {
+                    alert('Slug is al in gebruik of ongeldig.');
+                  }
+                }}
+              >
+                <span className="text-[10px] font-mono text-text-secondary/60">/</span>
+                <input
+                  type="text"
+                  value={slugDraft}
+                  onChange={e => setSlugDraft(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-'))}
+                  className="text-[11px] font-mono bg-indigo/5 border border-indigo/20 rounded px-1.5 py-0.5 w-36 outline-none focus:border-indigo"
+                  autoFocus
+                />
+                <button type="submit" className="text-indigo hover:text-indigo-light">
+                  <Check className="w-3.5 h-3.5" />
+                </button>
+                <button type="button" onClick={() => setEditingSlug(false)} className="text-text-secondary hover:text-dark">
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </form>
+            )}
+          </div>
           <div className="w-[1px] h-5 bg-warm-grey shrink-0"></div>
           <div className="text-[11px] font-medium text-text-secondary flex items-center gap-1.5 mr-2">
             {isSaving ? (

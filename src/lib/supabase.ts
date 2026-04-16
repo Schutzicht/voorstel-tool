@@ -232,6 +232,43 @@ export async function incrementViewCount(id: string) {
 }
 
 /**
+ * Update the URL slug for a proposal. Returns the updated slug or null
+ * on failure. Validates uniqueness within the client.
+ */
+export async function updateProposalSlug(
+  proposalId: string,
+  newSlug: string,
+): Promise<string | null> {
+  if (!isConfigured()) return null;
+  const clean = newSlug.toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/^-+|-+$/g, '').replace(/-+/g, '-');
+  if (!clean) return null;
+
+  // Check uniqueness within same client
+  const { data: current } = await supabase
+    .from('proposals')
+    .select('client_id')
+    .eq('id', proposalId)
+    .maybeSingle();
+  if (current?.client_id) {
+    const { data: conflict } = await supabase
+      .from('proposals')
+      .select('id')
+      .eq('client_id', current.client_id)
+      .eq('slug', clean)
+      .neq('id', proposalId)
+      .maybeSingle();
+    if (conflict) return null; // slug already taken
+  }
+
+  const { error } = await supabase
+    .from('proposals')
+    .update({ slug: clean, updated_at: new Date().toISOString() })
+    .eq('id', proposalId);
+  if (error) { console.error('updateProposalSlug', error); return null; }
+  return clean;
+}
+
+/**
  * Get pretty URL parts for a proposal. Returns null if the proposal
  * doesn't have a client + slug set yet.
  */
