@@ -4,34 +4,22 @@ import { jsPDF } from 'jspdf';
 /**
  * Exports all visible slides to a compressed PDF.
  *
- * The slides in the DOM are rendered inside ScaledSlide wrappers that
- * apply a CSS `transform: scale(...)` to fit the preview panel. If we
- * capture them in-place, html2canvas picks up the scaled version and
- * text looks crunched/overlapping. Instead, we clone each slide into a
- * temporary full-size (1280×720) off-screen container with NO transform,
- * capture THAT, then clean up.
+ * Clones each slide into an off-screen full-size container so
+ * html2canvas captures at 1280×720 without any scale-transform
+ * artifacts from the ScaledSlide preview wrapper.
  */
 export async function exportPDF(filename: string) {
   const slideWrappers = document.querySelectorAll<HTMLElement>('[data-slide]');
   if (slideWrappers.length === 0) return;
 
-  // A4 Landscape dimensions in mm
-  const pageW = 297;
+  const pageW = 297; // A4 landscape mm
   const pageH = 210;
 
-  // Create an off-screen staging area at full slide resolution
+  // Off-screen staging area at native slide resolution
   const stage = document.createElement('div');
-  stage.style.cssText = `
-    position: fixed;
-    left: -9999px;
-    top: 0;
-    width: 1280px;
-    height: 720px;
-    overflow: hidden;
-    z-index: -1;
-    pointer-events: none;
-    background: #FAF9F6;
-  `;
+  stage.style.cssText =
+    'position:fixed;left:-9999px;top:0;width:1280px;height:720px;' +
+    'overflow:hidden;z-index:-1;pointer-events:none;background:#FAF9F6;';
   document.body.appendChild(stage);
 
   const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
@@ -41,25 +29,48 @@ export async function exportPDF(filename: string) {
       const slideContent = slideWrappers[i].querySelector('.pdf-slide') as HTMLElement;
       if (!slideContent) continue;
 
-      // Clone the slide into the off-screen stage (full size, no transform)
+      // Clone into the off-screen stage
       const clone = slideContent.cloneNode(true) as HTMLElement;
-      clone.style.cssText = `
-        width: 1280px;
-        height: 720px;
-        position: relative;
-        transform: none !important;
-        overflow: hidden;
-      `;
+
+      // Reset any transform that ScaledSlide may have inherited
+      clone.style.transform = 'none';
+      clone.style.position = 'relative';
+
+      // Force all .reveal elements to their final visible state —
+      // cloned nodes don't have the IntersectionObserver trigger,
+      // so without this they stay at opacity:0 / translateY(30px).
+      clone.querySelectorAll('.reveal').forEach((el) => {
+        const htmlEl = el as HTMLElement;
+        htmlEl.classList.add('visible');
+        htmlEl.style.opacity = '1';
+        htmlEl.style.transform = 'none';
+        htmlEl.style.animation = 'none';
+      });
+
+      // Also ensure the clone itself is fully opaque if it has .reveal
+      if (clone.classList.contains('reveal')) {
+        clone.classList.add('visible');
+        clone.style.opacity = '1';
+        clone.style.transform = 'none';
+        clone.style.animation = 'none';
+      }
+
+      // Remove any backdrop-filter / blur that may cause rendering issues
+      clone.querySelectorAll('[class*="backdrop"]').forEach((el) => {
+        (el as HTMLElement).style.backdropFilter = 'none';
+        (el as HTMLElement).style.setProperty('-webkit-backdrop-filter', 'none');
+      });
+
       stage.innerHTML = '';
       stage.appendChild(clone);
 
-      // Small delay to let the clone paint (fonts, images)
-      await new Promise((r) => setTimeout(r, 50));
+      // Brief paint delay for fonts / images
+      await new Promise((r) => setTimeout(r, 80));
 
       const canvas = await html2canvas(clone, {
         width: 1280,
         height: 720,
-        scale: 2, // 2x for quality
+        scale: 2,
         useCORS: true,
         allowTaint: true,
         backgroundColor: '#FAF9F6',
@@ -67,12 +78,10 @@ export async function exportPDF(filename: string) {
       });
 
       const imgData = canvas.toDataURL('image/jpeg', 0.85);
-
       if (i > 0) pdf.addPage();
       pdf.addImage(imgData, 'JPEG', 0, 0, pageW, pageH);
     }
   } finally {
-    // Clean up
     document.body.removeChild(stage);
   }
 
