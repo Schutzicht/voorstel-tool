@@ -3,7 +3,13 @@ import { jsPDF } from 'jspdf';
 
 /**
  * Exports all visible slides to a compressed PDF.
- * Finds all elements with [data-slide] attribute and renders them.
+ *
+ * The slides in the DOM are rendered inside ScaledSlide wrappers that
+ * apply a CSS `transform: scale(...)` to fit the preview panel. If we
+ * capture them in-place, html2canvas picks up the scaled version and
+ * text looks crunched/overlapping. Instead, we clone each slide into a
+ * temporary full-size (1280×720) off-screen container with NO transform,
+ * capture THAT, then clean up.
  */
 export async function exportPDF(filename: string) {
   const slideWrappers = document.querySelectorAll<HTMLElement>('[data-slide]');
@@ -13,28 +19,61 @@ export async function exportPDF(filename: string) {
   const pageW = 297;
   const pageH = 210;
 
+  // Create an off-screen staging area at full slide resolution
+  const stage = document.createElement('div');
+  stage.style.cssText = `
+    position: fixed;
+    left: -9999px;
+    top: 0;
+    width: 1280px;
+    height: 720px;
+    overflow: hidden;
+    z-index: -1;
+    pointer-events: none;
+    background: #FAF9F6;
+  `;
+  document.body.appendChild(stage);
+
   const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
 
-  for (let i = 0; i < slideWrappers.length; i++) {
-    // Find the actual 1280x720 slide content inside
-    const slideContent = slideWrappers[i].querySelector('.pdf-slide') as HTMLElement;
-    if (!slideContent) continue;
+  try {
+    for (let i = 0; i < slideWrappers.length; i++) {
+      const slideContent = slideWrappers[i].querySelector('.pdf-slide') as HTMLElement;
+      if (!slideContent) continue;
 
-    const canvas = await html2canvas(slideContent, {
-      width: 1280,
-      height: 720,
-      scale: 2, // 2x for quality, but JPEG compression keeps size down
-      useCORS: true,
-      allowTaint: true,
-      backgroundColor: '#FAF9F6',
-      logging: false,
-    });
+      // Clone the slide into the off-screen stage (full size, no transform)
+      const clone = slideContent.cloneNode(true) as HTMLElement;
+      clone.style.cssText = `
+        width: 1280px;
+        height: 720px;
+        position: relative;
+        transform: none !important;
+        overflow: hidden;
+      `;
+      stage.innerHTML = '';
+      stage.appendChild(clone);
 
-    // Convert to JPEG at 85% quality — massively reduces file size vs PNG
-    const imgData = canvas.toDataURL('image/jpeg', 0.85);
+      // Small delay to let the clone paint (fonts, images)
+      await new Promise((r) => setTimeout(r, 50));
 
-    if (i > 0) pdf.addPage();
-    pdf.addImage(imgData, 'JPEG', 0, 0, pageW, pageH);
+      const canvas = await html2canvas(clone, {
+        width: 1280,
+        height: 720,
+        scale: 2, // 2x for quality
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#FAF9F6',
+        logging: false,
+      });
+
+      const imgData = canvas.toDataURL('image/jpeg', 0.85);
+
+      if (i > 0) pdf.addPage();
+      pdf.addImage(imgData, 'JPEG', 0, 0, pageW, pageH);
+    }
+  } finally {
+    // Clean up
+    document.body.removeChild(stage);
   }
 
   const safeName = filename.replace(/[^a-zA-Z0-9\s-]/g, '').trim() || 'Voorstel';
