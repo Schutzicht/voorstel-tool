@@ -11,7 +11,11 @@ import { SignaturePad } from './SignaturePad';
 import { exportPDF } from '../lib/pdfExport';
 
 export default function ProposalViewer() {
-  const { id } = useParams<{ id: string }>();
+  // The proposal ID comes from either:
+  //  - window.__PROPOSAL_ID (injected by the hub's pretty-URL SSR page)
+  //  - or the URL param /v/:id (legacy / direct access)
+  const { id: urlId } = useParams<{ id: string }>();
+  const id = (window as any).__PROPOSAL_ID || urlId;
   const [data, setData] = useState<ProposalData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
