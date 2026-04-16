@@ -4,9 +4,12 @@ import { jsPDF } from 'jspdf';
 /**
  * Exports all visible slides to a compressed PDF.
  *
- * Clones each slide into an off-screen full-size container so
- * html2canvas captures at 1280×720 without any scale-transform
- * artifacts from the ScaledSlide preview wrapper.
+ * Uses the same technique as the ORganized report tool:
+ * - Clones each slide off-screen at full native size
+ * - Adds a `pdf-rendering` body class for print-specific CSS
+ * - html2canvas uses windowWidth/windowHeight from the element's
+ *   own scroll dimensions (no forced viewport override)
+ * - Result: text renders at its natural proportions, no stretching
  */
 export async function exportPDF(filename: string) {
   const slideWrappers = document.querySelectorAll<HTMLElement>('[data-slide]');
@@ -15,11 +18,15 @@ export async function exportPDF(filename: string) {
   const pageW = 297; // A4 landscape mm
   const pageH = 210;
 
-  // Off-screen staging area at native slide resolution
+  // Signal to CSS that we're rendering for PDF
+  document.body.classList.add('pdf-rendering');
+
+  // Off-screen staging area — no fixed dimensions, let the slide's
+  // own .pdf-slide class (1280×720) determine the size.
   const stage = document.createElement('div');
   stage.style.cssText =
-    'position:fixed;left:-9999px;top:0;width:1280px;height:720px;' +
-    'overflow:hidden;z-index:-1;pointer-events:none;background:#FAF9F6;';
+    'position:fixed;left:-9999px;top:0;' +
+    'overflow:visible;z-index:-1;pointer-events:none;';
   document.body.appendChild(stage);
 
   const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
@@ -31,23 +38,16 @@ export async function exportPDF(filename: string) {
 
       // Clone into the off-screen stage
       const clone = slideContent.cloneNode(true) as HTMLElement;
-
-      // Reset any transform that ScaledSlide may have inherited
       clone.style.transform = 'none';
-      clone.style.position = 'relative';
 
-      // Force all .reveal elements to their final visible state —
-      // cloned nodes don't have the IntersectionObserver trigger,
-      // so without this they stay at opacity:0 / translateY(30px).
+      // Force all .reveal elements to their final visible state
       clone.querySelectorAll('.reveal').forEach((el) => {
-        const htmlEl = el as HTMLElement;
-        htmlEl.classList.add('visible');
-        htmlEl.style.opacity = '1';
-        htmlEl.style.transform = 'none';
-        htmlEl.style.animation = 'none';
+        const h = el as HTMLElement;
+        h.classList.add('visible');
+        h.style.opacity = '1';
+        h.style.transform = 'none';
+        h.style.animation = 'none';
       });
-
-      // Also ensure the clone itself is fully opaque if it has .reveal
       if (clone.classList.contains('reveal')) {
         clone.classList.add('visible');
         clone.style.opacity = '1';
@@ -55,34 +55,41 @@ export async function exportPDF(filename: string) {
         clone.style.animation = 'none';
       }
 
-      // Remove any backdrop-filter / blur that may cause rendering issues
-      clone.querySelectorAll('[class*="backdrop"]').forEach((el) => {
-        (el as HTMLElement).style.backdropFilter = 'none';
-        (el as HTMLElement).style.setProperty('-webkit-backdrop-filter', 'none');
+      // Disable backdrop-filter (html2canvas can't render it)
+      clone.querySelectorAll('*').forEach((el) => {
+        const h = el as HTMLElement;
+        const bf = getComputedStyle(h).backdropFilter;
+        if (bf && bf !== 'none') {
+          h.style.backdropFilter = 'none';
+          h.style.setProperty('-webkit-backdrop-filter', 'none');
+        }
       });
 
       stage.innerHTML = '';
       stage.appendChild(clone);
 
-      // Brief paint delay for fonts / images
-      await new Promise((r) => setTimeout(r, 80));
+      // Let the clone paint (fonts, images)
+      await new Promise((r) => setTimeout(r, 100));
 
+      // Capture at the element's own natural scroll dimensions
+      // — no forced width/height, matches the ORganized technique
       const canvas = await html2canvas(clone, {
-        width: 1280,
-        height: 720,
-        scale: 2,
+        scale: 1.5,
         useCORS: true,
         allowTaint: true,
         backgroundColor: '#FAF9F6',
         logging: false,
+        windowWidth: clone.scrollWidth,
+        windowHeight: clone.scrollHeight,
       });
 
-      const imgData = canvas.toDataURL('image/jpeg', 0.85);
+      const imgData = canvas.toDataURL('image/jpeg', 0.78);
       if (i > 0) pdf.addPage();
-      pdf.addImage(imgData, 'JPEG', 0, 0, pageW, pageH);
+      pdf.addImage(imgData, 'JPEG', 0, 0, pageW, pageH, undefined, 'FAST');
     }
   } finally {
     document.body.removeChild(stage);
+    document.body.classList.remove('pdf-rendering');
   }
 
   const safeName = filename.replace(/[^a-zA-Z0-9\s-]/g, '').trim() || 'Voorstel';
