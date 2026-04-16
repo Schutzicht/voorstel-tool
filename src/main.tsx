@@ -14,18 +14,15 @@ try {
   document.documentElement.classList.add('embedded')
 }
 
-// When served via the hub's pretty URL (/<client>/voorstel/<slug>),
-// the proposal UUID is injected as window.__PROPOSAL_ID. Rewrite the
-// URL to /v/<id> so React Router's /v/:id route matches and the
-// ProposalViewer renders. The browser address bar keeps the pretty URL
-// because replaceState doesn't trigger a visible navigation.
-// NOTE: replaceState DOES change what's shown in the address bar, but
-// since this fires before the first paint, the user never sees the
-// original pretty URL flash — they just see the voorstel content.
+// When the bundle is loaded directly via `/tools/voorstel/index.html`
+// (e.g. the hub's staff-facing /voorstel wrapper iframe), rewrite the
+// URL to the admin dashboard before React Router mounts, otherwise no
+// route matches and the app renders a blank screen.
+// NOTE: when __PROPOSAL_ID is set (pretty URL serving), we DON'T
+// replaceState — the ProposalViewer reads __PROPOSAL_ID directly and
+// the address bar stays on the pretty URL.
 try {
-  if ((window as any).__PROPOSAL_ID) {
-    window.history.replaceState({}, '', '/v/' + (window as any).__PROPOSAL_ID)
-  } else {
+  if (!(window as any).__PROPOSAL_ID) {
     const p = window.location.pathname
     if (
       /\/tools\/voorstel(\/.*)?$/i.test(p) ||
